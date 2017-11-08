@@ -3,8 +3,15 @@ const {transfer, harvest} = require('commands')
 const {isFullyCharged, needsEnergy} = require('resource')
 const {sources, spawn, depletedStructures} = require('room')
 
+const energySinks = room => {
+    return room.find(FIND_STRUCTURES, {
+        filter: target => target.energy < target.energyCapacity
+    })
+}
+
 const target = id => Game.getObjectById(id)
 const randomTarget = targets => targets[Math.floor(Math.random() * targets.length)]
+const firstTarget = targets => targets[0]
 
 const taskHarvest = targetId => creep => {
     creep.memory.task = {id: 'harvest', targetId: targetId}
@@ -14,21 +21,22 @@ const taskHarvest = targetId => creep => {
 
 const taskTransfer = (targetId, resource) => creep => {
     creep.memory.task = {id: 'transfer', targetId: targetId, resource: resource}
-    console.log('transfering...')
     const ok = transfer(creep, target(targetId), resource)
-    if(!ok || (!creep.carry[resource])) delete creep.memory.task
+    if(!ok || !creep.carry[resource]) delete creep.memory.task
 }
 
 const assignTask = creep => {
-    if(isFullyCharged(creep)) {
+    if(creep.carry.energy) {
         // TODO: claim energy transfer task
         // TODO: what should we do if no energy is needed?
-        const targets = depletedStructures(creep)
-        if(targets.length > 0) return taskTransfer(targets[0].id, RESOURCE_ENERGY)
+        const targets = energySinks(creep.room)
+        if(target.length > 0) taskTransfer(randomTarget(targets).id, RESOURCE_ENERGY)
+        else console.log('no energy needed!')
     }
     else {
         const targets = sources(creep)
         if(targets.length > 0) return taskHarvest(randomTarget(targets).id)
+        else console.log('no energy available!')
     }
 }
 
@@ -36,7 +44,6 @@ const assignTask = creep => {
  * Current task from memory or new task.
  */
 const task = creep => {
-    console.log(creep, JSON.stringify(creep.memory.task))
     const targetId = () => creep.memory.task.targetId
     const resource = () => creep.memory.task.resource
 

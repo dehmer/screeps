@@ -40,9 +40,9 @@ module.exports.loop = function () {
     const carrierBody = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE]
     const workerBody = [WORK, WORK, MOVE]
 
-    creepFactory(spawn, 'builder', carrierBody, 5)()
+    creepFactory(spawn, 'builder', carrierBody, 0)()
     creepFactory(spawn, 'harvester', workerBody, 0)()
-    creepFactory(spawn, 'tanker', simpleBody, 4)()
+    creepFactory(spawn, 'tanker', carrierBody, 4)()
     creepFactory(spawn, 'worker', simpleBody, 2)()
     creepFactory(spawn, 'upgrader', carrierBody, 5)()
 

@@ -1,7 +1,3 @@
-/**
- * @param {*} creep
- * @param {*} target
- */
 const moveTo = (creep, target) => {
   const result = creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}})
   switch(result) {
@@ -25,8 +21,8 @@ const harvest = (creep, target) => {
       case ERR_NOT_OWNER: creep.suicide()
       case ERR_NOT_IN_RANGE: return moveTo(creep, target)
       case ERR_BUSY: return
-      case ERR_INVALID_TARGET: console.log(`[creep.harvest] ERR_INVALID_TARGET - creep: ${creep.name}, target: ${target}`)
-      default: console.log(`[creep.harvest] creep: ${creep.name}, target: ${target}`, result)
+      case ERR_INVALID_TARGET: return console.log(`[creep.harvest] ERR_INVALID_TARGET - creep: ${creep.name}, target: ${target}`)
+      default: return console.log(`[creep.harvest] creep: ${creep.name}, target: ${target}`, result)
   }
 }
 
@@ -35,7 +31,7 @@ const repair = (creep, target) => {
   switch(result) {
       case OK: return
       case ERR_NOT_IN_RANGE: return moveTo(creep, target)
-      default: console.log(`[creep.harvest] creep: ${creep.name}, target: ${target}`, result)
+      default: return console.log(`[creep.harvest] creep: ${creep.name}, target: ${target}`, result)
   }
 }
 
@@ -43,6 +39,7 @@ const transfer = (creep, target, resource) => {
   const result = creep.transfer(target, RESOURCE_ENERGY)
   switch(result) {
       case OK: return true
+      case ERR_NOT_ENOUGH_RESOURCES: return console.log(`[creep.transfer] ERR_NOT_ENOUGH_RESOURCES - creep: ${creep.name}`)
       case ERR_NOT_IN_RANGE: return moveTo(creep, target)
       case ERR_FULL: return false
       default: {
