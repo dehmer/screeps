@@ -30,7 +30,7 @@ const assignTask = creep => {
         // TODO: claim energy transfer task
         // TODO: what should we do if no energy is needed?
         const targets = energySinks(creep.room)
-        if(target.length > 0) taskTransfer(randomTarget(targets).id, RESOURCE_ENERGY)
+        if(target.length > 0) return taskTransfer(randomTarget(targets).id, RESOURCE_ENERGY)
         else console.log('no energy needed!')
     }
     else {
@@ -44,6 +44,7 @@ const assignTask = creep => {
  * Current task from memory or new task.
  */
 const task = creep => {
+    // console.log(creep, JSON.stringify(creep.memory.task))
     const targetId = () => creep.memory.task.targetId
     const resource = () => creep.memory.task.resource
 
