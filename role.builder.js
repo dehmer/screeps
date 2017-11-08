@@ -4,6 +4,8 @@ const {isFullyCharged, needsEnergy} = require('resource')
 
 const run = creep => {
 
+  // creep.moveTo(Game.flags['staging'])
+
   if(creep.memory.building && creep.carry.energy == 0) {
     creep.memory.building = false;
   }

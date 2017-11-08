@@ -1,5 +1,9 @@
 const moveTo = (creep, target) => {
+  // Just sit it out, don't move.
+  if(creep.fartigue) return true
+
   const result = creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}})
+
   switch(result) {
     case OK: return true
     // There is currently no path, target might be blocked.
@@ -29,9 +33,13 @@ const harvest = (creep, target) => {
 const repair = (creep, target) => {
   const result = creep.repair(target)
   switch(result) {
-      case OK: return
+      case OK: return true
+      case ERR_NOT_ENOUGH_RESOURCES: return false
       case ERR_NOT_IN_RANGE: return moveTo(creep, target)
-      default: return console.log(`[creep.harvest] creep: ${creep.name}, target: ${target}`, result)
+      default: {
+        console.log(`[creep.repair] creep: ${creep.name}, target: ${target}`, result)
+        return false
+      }
   }
 }
 
