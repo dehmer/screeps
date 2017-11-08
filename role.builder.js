@@ -1,9 +1,9 @@
-const {spawn, constructionSites} = require('room')
-const {harvest, build} = require('commands')
-const roleUpgrader = require('role.upgrader')
-const roleHarvester = require('role.harvester')
+const {sources, spawn, depletedStructures, constructionSites} = require('room')
+const {harvest, build, transfer} = require('commands')
+const {isFullyCharged, needsEnergy} = require('resource')
 
 const run = creep => {
+
   if(creep.memory.building && creep.carry.energy == 0) {
     creep.memory.building = false;
   }
@@ -15,7 +15,6 @@ const run = creep => {
   if(creep.memory.building) {
     var targets = constructionSites(creep)
     if(targets.length) build(creep, targets[0])
-    else roleHarvester.run(creep)
   }
   else {
     var sources = creep.room.find(FIND_SOURCES)

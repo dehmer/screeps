@@ -1,12 +1,23 @@
 const commands = require('commands')
-const resource = require('resource')
+const {isFullyCharged} = require('resource')
 
 const run = creep => {
-  if(!resource.isFullyCharged(creep)) {
-      var sources = creep.room.find(FIND_SOURCES);
-      commands.harvest(creep, sources[1])
+
+  // Decide initial state if necessary.
+  if(!creep.memory.task) {
+    if(creep.carry.energy > 0) creep.memory.task = 'upgrade'
+    else creep.memory.task = 'harvest'
   }
-  else commands.upgradeController(creep)
+
+  if(creep.memory.task == 'harvest') {
+    var sources = creep.room.find(FIND_SOURCES);
+    commands.harvest(creep, sources[0])
+    if(isFullyCharged(creep)) creep.memory.task = 'upgrade'
+  }
+  else {
+    if(!creep.carry.energy) return creep.memory.task = 'harvest'
+    commands.upgradeController(creep)
+  }
 }
 
 module.exports = {
