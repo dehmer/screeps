@@ -28,7 +28,6 @@ printRooms = () => {
     }
 }
 
-
 module.exports.loop = function () {
 
     for(var name in Memory.creeps) {
@@ -36,22 +35,18 @@ module.exports.loop = function () {
     }
 
     const spawn = Game.spawns['Spawn1']
-    const simpleBody = [WORK, CARRY, MOVE]
-    const carrierBody = [WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE]
-    const workerBody = [WORK, WORK, MOVE]
 
-    creepFactory(spawn, 'tanker', simpleBody, 5)()
-    creepFactory(spawn, 'builder', carrierBody, 4)()
-    creepFactory(spawn, 'harvester', workerBody, 0)()
-    creepFactory(spawn, 'worker', simpleBody, 0)()
-    creepFactory(spawn, 'upgrader', carrierBody, 5)()
+    const lightMaintenance = [WORK, CARRY, MOVE]
+    const mediumMaintenance = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
+    const heavyMaintenance = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
+    const harvesterBody = [WORK, WORK, MOVE]
+
+    creepFactory(spawn, 'tanker', mediumMaintenance, 5)()
+    creepFactory(spawn, 'upgrader', mediumMaintenance, 3)()
 
     for(var name in Game.creeps) {
         const creep = Game.creeps[name]
-        if(creep.memory.role == 'worker') roleWorker.run(creep)
-        else if(creep.memory.role == 'harvester') roleHarvester.run(creep)
-        else if(creep.memory.role == 'tanker') roleTanker.run(creep)
+        if(creep.memory.role == 'tanker') roleTanker.run(creep)
         else if(creep.memory.role == 'upgrader') roleUpgrader.run(creep)
-        else if(creep.memory.role == 'builder') roleBuilder.run(creep)
     }
 }

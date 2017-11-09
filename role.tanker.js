@@ -48,14 +48,19 @@ const taskRepair = targetId => creep => {
 }
 
 const assignTask = creep => {
+
     if(creep.carry.energy) {
         // TODO: claim energy transfer task
         // TODO: what should we do if no energy is needed?
         const sinks = energySinks(creep.room)
         if(sinks.length > 0) return taskTransfer(randomTarget(sinks).id, RESOURCE_ENERGY)
 
-        const damaged = damagedStructures(creep.room)
-        if(damaged.length > 0) return taskRepair(randomTarget(damaged).id)
+        if(Math.random() < 0.1) {
+            const damaged = damagedStructures(creep.room)
+            if(damaged.length > 0) return taskRepair(randomTarget(damaged).id)
+        }
+
+        return taskTransfer(creep.room.storage.id, RESOURCE_ENERGY)
     }
 
     const targets = sources(creep.room)
@@ -67,10 +72,6 @@ const assignTask = creep => {
  * Current task from memory or new task.
  */
 const task = creep => {
-    // if(creep.name === 'tanker-78373') {
-    //     console.log(creep, JSON.stringify(creep.memory.task))
-    // }
-
     const targetId = () => creep.memory.task.targetId
     const resource = () => creep.memory.task.resource
 
