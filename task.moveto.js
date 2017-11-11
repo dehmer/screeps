@@ -22,4 +22,7 @@ const moveto = targetId => creep => {
   if(target.pos.isEqualTo(creep.pos)) clearTask(creep)
 }
 
-module.exports = moveto
+module.exports = {
+  id: 'moveto',
+  invoke: task => moveto(task.targetId)
+}

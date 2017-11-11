@@ -28,7 +28,7 @@ const nextTask = creep => {
 
     // TODO: duplicate code (-> role.fixer)
 
-    {
+    if(random > 0.2) {
       // Damages structures ordered by damage (highest first),
       // filter targets currently in repair by other creeps.
       const repairers = _.filter(Game.creeps, creep => creep.memory.task && creep.memory.task.id === 'repair')

@@ -15,4 +15,7 @@ const build = targetId => creep => {
   if(isEmpty(creep, RESOURCE_ENERGY)) clearTask(creep)
 }
 
-module.exports = build
+module.exports = {
+  id: 'build',
+  invoke: task => build(task.targetId)
+}

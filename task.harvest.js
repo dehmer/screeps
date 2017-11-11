@@ -42,4 +42,7 @@ const harvest = targetId => creep => {
   if(isFullyLoaded(creep, RESOURCE_ENERGY)) clearTask(creep)
 }
 
-module.exports = harvest
+module.exports = {
+  id: 'harvest',
+  invoke: task => harvest(task.targetId)
+}

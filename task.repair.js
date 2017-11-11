@@ -20,4 +20,7 @@ const repair = targetId => creep => {
   if(isEmpty(creep, RESOURCE_ENERGY)) return clearTask(creep)
 }
 
-module.exports = repair
+module.exports = {
+  id: 'repair',
+  invoke: task => repair(task.targetId)
+}

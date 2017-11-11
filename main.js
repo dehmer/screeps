@@ -37,8 +37,8 @@ module.exports.loop = function () {
     const mediumBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
     const heavyBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
 
-    creepFactory(spawn, upgrader.name, lightBody, 2)()
-    creepFactory(spawn, maintenance.name, mediumBody, 6)()
+    creepFactory(spawn, upgrader.name, mediumBody, 3)()
+    creepFactory(spawn, maintenance.name, lightBody, 6)()
     creepFactory(spawn, fixer.name, lightBody, 2)()
 
     const containerCount = containers(spawn.room).length

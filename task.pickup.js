@@ -27,4 +27,7 @@ const pickup = targetId => creep => {
   if(isFullyLoaded(creep, RESOURCE_ENERGY)) clearTask(creep)
 }
 
-module.exports = pickup
+module.exports = {
+  id: 'pickup',
+  invoke: task => pickup(task.targetId)
+}

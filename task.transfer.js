@@ -18,4 +18,7 @@ const transfer = (targetId, resource) => creep => {
   if(isEmpty(creep, resource)) clearTask(creep)
 }
 
-module.exports = transfer
+module.exports = {
+  id: 'transfer',
+  invoke: task => transfer(task.targetId, task.resource)
+}

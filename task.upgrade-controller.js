@@ -11,4 +11,7 @@ const upgradeController = () => creep => {
   if(isEmpty(creep, RESOURCE_ENERGY)) clearTask(creep)
 }
 
-module.exports = upgradeController
+module.exports = {
+  id: 'upgrade-controller',
+  invoke: task => upgradeController()
+}

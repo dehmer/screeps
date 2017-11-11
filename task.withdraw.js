@@ -19,4 +19,7 @@ const withdraw = (targetId, resource) => creep => {
   if(isFullyLoaded(creep, resource)) return clearTask(creep)
 }
 
-module.exports = withdraw
+module.exports = {
+  id: 'withdraw',
+  invoke: task => withdraw(task.targetId, task.resource)
+}

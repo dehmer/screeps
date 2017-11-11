@@ -1,3 +1,4 @@
+const {K} = require('combinators')
 const {assignTask, clearTask, loadTask, randomObject} = require('task')
 
 const harvest = require('task.harvest')
@@ -9,24 +10,26 @@ const withdraw = require('task.withdraw')
 const pickup = require('task.pickup')
 const moveto = require('task.moveto')
 
+const tasks = {}
+tasks[harvest.id] = harvest
+tasks[transfer.id] = transfer
+tasks[build.id] = build
+tasks[repair.id] = repair
+tasks[upgradeController.id] = upgradeController
+tasks[withdraw.id] = withdraw
+tasks[pickup.id] = pickup
+tasks[moveto.id] = moveto
+
 const loop = taskFactory => creep => {
 
   const task = loadTask(creep) || taskFactory(creep)
   if(!task) return
 
   assignTask(creep, task)
-
-  switch(task.id) {
-    case 'harvest': return harvest(task.targetId)(creep)
-    case 'transfer': return transfer(task.targetId, task.resource)(creep)
-    case 'build': return build(task.targetId)(creep)
-    case 'repair': return repair(task.targetId)(creep)
-    case 'upgrade-controller': return upgradeController()(creep)
-    case 'withdraw': return withdraw(task.targetId, task.resource)(creep)
-    case 'pickup': return pickup(task.targetId)(creep)
-    case 'moveto': return moveto(task.targetId)(creep)
-    default: console.log('unsupported task', task.id)
-  }
+  K(tasks[task.id])(definition => {
+    if(definition) definition.invoke(task)(creep)
+    else console.log('unsupported task', task.id)
+  })
 }
 
 module.exports = loop
