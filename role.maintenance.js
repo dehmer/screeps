@@ -7,7 +7,7 @@
  */
 
 const loop = require('loop')
-const {randomObject, damage} = require('room')
+const {randomObject} = require('room')
 const {sinks, constructionSites, damagedStructures} = require('room')
 const {acquireEnergy} = require('task.composite')
 
@@ -25,6 +25,8 @@ const nextTask = creep => {
       const targets = constructionSites(creep.room)
       if(targets.length > 0) return { id: 'build', targetId: randomObject(targets).id }
     }
+
+    // TODO: duplicate code (-> role.fixer)
 
     {
       // Damages structures ordered by damage (highest first),

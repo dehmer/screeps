@@ -15,7 +15,8 @@ const creepFactory = (spawn, role, body, targetCount) => () => {
         const result = spawn.spawnCreep(body, `${role}-${Game.time}`, {memory: {role: role}})
         switch(result) {
             case OK: return
-            case ERR_NOT_ENOUGH_ENERGY: break;
+            case ERR_BUSY: /* wait */ break
+            case ERR_NOT_ENOUGH_ENERGY: break
             default: console.log('[spawn.spawnCreep] - unhandled', result)
         }
     }
@@ -39,7 +40,7 @@ module.exports.loop = function () {
     creepFactory(spawn, fixer.role, lightBody, 2)()
 
     const containerCount = containers(spawn.room).length
-    creepFactory(spawn, harvester.role, [WORK, MOVE], containerCount)()
+    creepFactory(spawn, harvester.role, [WORK, WORK, MOVE], containerCount)()
 
     for(var name in Game.creeps) {
         const creep = Game.creeps[name]
