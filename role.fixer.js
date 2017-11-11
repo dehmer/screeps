@@ -9,6 +9,13 @@ const {randomObject} = require('room')
 const {sources, criticalInfrastructure, damagedStructures} = require('room')
 const {containers} = require('room')
 
+const firstTask = options => creep => {
+  for(i in options) {
+    const task = options[i](creep)
+    if(task) return task
+  }
+}
+
 const nextTask = creep => {
   if(creep.carry.energy) {
 
@@ -34,25 +41,26 @@ const nextTask = creep => {
   else {
 
     // Find dropped energy
-
-    {
+    const droppedEnergy = creep => {
       const targets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }})
       if(targets.length > 0) return { id: 'pickup', targetId: randomObject(targets).id }
     }
 
     // then try containers first...
 
-    {
+    const container = creep => {
       const targets = _.filter(containers(creep.room), c => c.store[RESOURCE_ENERGY] > 200)
       if(targets.length > 0) return { id: 'withdraw', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
     }
 
     // ... then sources.
 
-    {
+    const source = creep => {
       const targets = sources(creep.room)
       if(targets.length > 0) return { id: 'harvest', targetId: randomObject(targets).id }
     }
+
+    return firstTask([droppedEnergy, container, source])(creep)
   }
 }
 

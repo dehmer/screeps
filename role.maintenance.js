@@ -47,7 +47,6 @@ const nextTask = creep => {
     {
       const targets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }})
       if(targets.length > 0) return { id: 'pickup', targetId: randomObject(targets).id }
-
     }
 
     {
