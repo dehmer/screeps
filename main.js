@@ -22,12 +22,12 @@ const creepFactory = (spawn, role, body, targetCount) => () => {
 }
 
 module.exports.loop = function () {
+    const spawn = Game.spawns['Spawn1']
+
     // Free memory of deceased creeps:
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) delete Memory.creeps[name];
     }
-
-    const spawn = Game.spawns['Spawn1']
 
     // TODO: Choose bodies depending on available energy.
     const lightBody = [MOVE, MOVE, WORK, CARRY]
@@ -43,6 +43,11 @@ module.exports.loop = function () {
 
     for(var name in Game.creeps) {
         const creep = Game.creeps[name]
+        // const role = name.split(/(\w+)/)
+        // console.log(role[1])
+        // creep.memory.role = role[1]
+
+
         if(creep.memory.role == upgrader.role) upgrader.run(creep)
         else if(creep.memory.role == maintenance.role) maintenance.run(creep)
         else if(creep.memory.role == fixer.role) fixer.run(creep)

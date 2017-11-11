@@ -1,8 +1,8 @@
 const {object, clearTask} = require('task')
 
 const isFullyLoaded = (creep, resource) =>
-creep.carryCapacity &&
-creep.carry[resource] === creep.carryCapacity
+  creep.carryCapacity &&
+  creep.carry[resource] === creep.carryCapacity
 
 const pickup = targetId => creep => {
   const target = object(targetId)
