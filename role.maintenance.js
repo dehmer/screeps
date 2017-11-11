@@ -44,8 +44,4 @@ const nextTask = creep => {
   else return acquireEnergy(creep)
 }
 
-
-module.exports = {
-  role: 'maintenance',
-  run: loop(nextTask)
-}
+require('role.registry').push({ name: 'maintenance', nextTask: nextTask })
