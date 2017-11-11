@@ -16,10 +16,13 @@ const isCritical = target =>
   ( target.structureType == STRUCTURE_CONTAINER ||
     target.structureType == STRUCTURE_RAMPART ||
     target.structureType == STRUCTURE_TOWER ||
-    target.structureType == STRUCTURE_STORAGE
+    target.structureType == STRUCTURE_STORAGE ||
+    target.structureType == STRUCTURE_ROAD
   ) && isDamaged(target)
 
 module.exports = {
+  damage: damage,
+
   rooms: () => Game.rooms,
   spawns: () => Game.spawns,
   spawn: name => Game.spawns[name],

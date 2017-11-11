@@ -1,5 +1,5 @@
 /**
- * FIXER CREEP (MOVE, CARRY, WORK)
+ * FIXER CREEP (MOVE, CARRY, WORK):
  *
  * Fixes critical infrastructure first.
  */
@@ -32,7 +32,15 @@ const nextTask = creep => {
 
   }
   else {
-    // Try containers first...
+
+    // Find dropped energy
+
+    {
+      const targets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }})
+      if(targets.length > 0) return { id: 'pickup', targetId: randomObject(targets).id }
+    }
+
+    // then try containers first...
 
     {
       const targets = _.filter(containers(creep.room), c => c.store[RESOURCE_ENERGY] > 200)

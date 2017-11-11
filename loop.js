@@ -6,6 +6,7 @@ const build = require('task.build')
 const repair = require('task.repair')
 const upgradeController = require('task.upgrade-controller')
 const withdraw = require('task.withdraw')
+const pickup = require('task.pickup')
 
 const loop = taskFactory => creep => {
 
@@ -21,6 +22,7 @@ const loop = taskFactory => creep => {
     case 'repair': return repair(task.targetId)(creep)
     case 'upgrade-controller': return upgradeController()(creep)
     case 'withdraw': return withdraw(task.targetId, task.resource)(creep)
+    case 'pickup': return pickup(task.targetId)(creep)
     default: console.log('unsupported task', task.id)
   }
 }

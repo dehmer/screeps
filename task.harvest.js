@@ -6,11 +6,9 @@ const isFullyLoaded = (creep, resource) =>
   creep.carry[resource] === creep.carryCapacity
 
 const harvest = targetId => creep => {
-  console.log(creep, 'harvesting')
   const target = object(targetId)
   const result = creep.harvest(target)
   if(result !== OK) {
-    if(creep.name === 'harvester-160076') console.log(result)
     switch(result) {
       case ERR_BUSY: /* don't care */ break
       case ERR_NOT_ENOUGH_RESOURCES: /* wait */  break

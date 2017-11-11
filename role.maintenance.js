@@ -7,11 +7,12 @@
  */
 
 const loop = require('loop')
-const {randomObject, containers} = require('room')
+const {randomObject, containers, damage} = require('room')
 const {sinks, sources, constructionSites, damagedStructures} = require('room')
 
 const nextTask = creep => {
-  if(creep.carry.energy) {
+  // Keep harvesting until fully loaded:
+  if(creep.carry.energy == creep.carryCapacity) {
     {
       const targets = sinks(creep.room)
       if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
@@ -31,6 +32,9 @@ const nextTask = creep => {
       const sites = _.map(repairers, creep => creep.memory.task.targetId)
       const targets = _.filter(damagedStructures(creep.room), target => sites.indexOf(target.id) === -1)
 
+      // console.log('#damages: ' + targets.length)
+      // _.forEach(targets, target => console.log(target, damage(target)))
+
       if(targets.length > 0) return { id: 'repair', targetId: targets[0].id }
     }
 
@@ -39,6 +43,12 @@ const nextTask = creep => {
 
   }
   else {
+
+    {
+      const targets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }})
+      if(targets.length > 0) return { id: 'pickup', targetId: randomObject(targets).id }
+
+    }
 
     {
       const targets = _.filter(containers(creep.room), c => c.store[RESOURCE_ENERGY] > 0)

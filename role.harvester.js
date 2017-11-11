@@ -1,5 +1,5 @@
 /**
- * HARVESTER CREEP (WORK, MOVE)
+ * HARVESTER CREEP (WORK, MOVE):
  *
  * Harvests energy and drops it in container (hopefully).
  */

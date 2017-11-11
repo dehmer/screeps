@@ -29,15 +29,15 @@ module.exports.loop = function () {
 
     const spawn = Game.spawns['Spawn1']
 
+    // TODO: Choose bodies depending on available energy.
     const lightBody = [MOVE, MOVE, WORK, CARRY]
     const mediumBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
     const heavyBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
 
-    creepFactory(spawn, upgrader.role, mediumBody, 2)()
-    creepFactory(spawn, maintenance.role, mediumBody, 6)()
-    creepFactory(spawn, fixer.role, lightBody, 1)()
+    creepFactory(spawn, upgrader.role, lightBody, 1)()
+    creepFactory(spawn, maintenance.role, lightBody, 4)()
+    creepFactory(spawn, fixer.role, lightBody, 2)()
 
-    // TODO: maintain as many static harvesters as containers:
     const containerCount = containers(spawn.room).length
     creepFactory(spawn, harvester.role, [WORK, MOVE], containerCount)()
 
