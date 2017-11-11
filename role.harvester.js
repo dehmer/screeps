@@ -31,4 +31,4 @@ const nextTask = creep => {
   }
 }
 
-require('role.registry').push({ name: 'harvester', nextTask: nextTask })
+module.exports = { name: 'harvester', nextTask: nextTask }

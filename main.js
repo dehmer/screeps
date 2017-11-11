@@ -1,19 +1,15 @@
 const {containers} = require('room')
-
-// load roles to fill role registry:
-require('role.upgrader')
-require('role.maintenance')
-require('role.fixer')
-require('role.harvester')
-
-const roles = require('role.registry')
 const loop = require('loop')
 
+const upgrader = require('role.upgrader')
+const maintenance = require('role.maintenance')
+const fixer = require('role.fixer')
+const harvester = require('role.harvester')
 
-const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
+
 
 const creepFactory = (spawn, role, body, targetCount) => () => {
-
+    const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
     if(spawn.room.energyAvailable < bodyCosts(body)) return
 
     var xs = _.filter(Game.creeps, (creep) => creep.memory.role == role)
@@ -41,15 +37,21 @@ module.exports.loop = function () {
     const mediumBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
     const heavyBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
 
-    creepFactory(spawn, 'upgrader', lightBody, 2)()
-    creepFactory(spawn, 'maintenance', mediumBody, 6)()
-    creepFactory(spawn, 'fixer', lightBody, 2)()
+    creepFactory(spawn, upgrader.name, lightBody, 2)()
+    creepFactory(spawn, maintenance.name, mediumBody, 6)()
+    creepFactory(spawn, fixer.name, lightBody, 2)()
 
     const containerCount = containers(spawn.room).length
-    creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
+    creepFactory(spawn, harvester.name, [WORK, WORK, MOVE], containerCount)()
+
+    const roles = {}
+    roles[upgrader.name]    = upgrader
+    roles[maintenance.name] = maintenance
+    roles[fixer.name]       = fixer
+    roles[harvester.name]   = harvester
 
     _.forEach(Game.creeps, creep => {
-        const role = roles.role(creep.memory.role)
+        const role = roles[creep.memory.role]
         if(role) loop(role.nextTask)(creep)
     })
 }
