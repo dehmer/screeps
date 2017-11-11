@@ -7,9 +7,8 @@
  */
 
 const loop = require('loop')
-const {randomObject} = require('room')
-const {sinks, constructionSites, damagedStructures} = require('room')
-const {acquireEnergy} = require('task.composite')
+const {randomObject, sinks, constructionSites} = require('room')
+const {acquireEnergy, repairDamagedStructure} = require('task.composite')
 
 const nextTask = creep => {
   // Keep harvesting until fully loaded:
@@ -26,16 +25,8 @@ const nextTask = creep => {
       if(targets.length > 0) return { id: 'build', targetId: randomObject(targets).id }
     }
 
-    // TODO: duplicate code (-> role.fixer)
-
-    if(random > 0.2) {
-      // Damages structures ordered by damage (highest first),
-      // filter targets currently in repair by other creeps.
-      const repairers = _.filter(Game.creeps, creep => creep.memory.task && creep.memory.task.id === 'repair')
-      const sites = _.map(repairers, creep => creep.memory.task.targetId)
-      const targets = _.filter(damagedStructures(creep.room), target => sites.indexOf(target.id) === -1)
-      if(targets.length > 0) return { id: 'repair', targetId: targets[0].id }
-    }
+    const repairTask = repairDamagedStructure(creep)
+    if(repairTask) return repairTask
 
     // Still nothing to do? Upgrade contoller!
     return { id: 'upgrade-controller' }
