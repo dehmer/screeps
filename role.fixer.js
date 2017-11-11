@@ -5,16 +5,8 @@
  */
 
 const loop = require('loop')
-const {randomObject} = require('room')
-const {sources, criticalInfrastructure, damagedStructures} = require('room')
-const {containers} = require('room')
-
-const firstTask = options => creep => {
-  for(i in options) {
-    const task = options[i](creep)
-    if(task) return task
-  }
-}
+const {criticalInfrastructure, damagedStructures, randomObject} = require('room')
+const {acquireEnergy} = require('task.composite')
 
 const nextTask = creep => {
   if(creep.carry.energy) {
@@ -25,7 +17,7 @@ const nextTask = creep => {
     }
 
     {
-      // Damages structures ordered by damage (highest first),
+      // Damaged structures ordered by damage (highest first),
       // filter targets currently in repair by other creeps.
       const repairers = _.filter(Game.creeps, creep => creep.memory.task && creep.memory.task.id === 'repair')
       const sites = _.map(repairers, creep => creep.memory.task.targetId)
@@ -36,32 +28,8 @@ const nextTask = creep => {
 
     // Still nothing to do? Upgrade contoller!
     return { id: 'upgrade-controller' }
-
   }
-  else {
-
-    // Find dropped energy
-    const droppedEnergy = creep => {
-      const targets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }})
-      if(targets.length > 0) return { id: 'pickup', targetId: randomObject(targets).id }
-    }
-
-    // then try containers first...
-
-    const container = creep => {
-      const targets = _.filter(containers(creep.room), c => c.store[RESOURCE_ENERGY] > 200)
-      if(targets.length > 0) return { id: 'withdraw', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
-    }
-
-    // ... then sources.
-
-    const source = creep => {
-      const targets = sources(creep.room)
-      if(targets.length > 0) return { id: 'harvest', targetId: randomObject(targets).id }
-    }
-
-    return firstTask([droppedEnergy, container, source])(creep)
-  }
+  else return acquireEnergy(creep)
 }
 
 module.exports = {

@@ -35,7 +35,7 @@ module.exports.loop = function () {
     const heavyBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
 
     creepFactory(spawn, upgrader.role, lightBody, 1)()
-    creepFactory(spawn, maintenance.role, lightBody, 4)()
+    creepFactory(spawn, maintenance.role, mediumBody, 4)()
     creepFactory(spawn, fixer.role, lightBody, 2)()
 
     const containerCount = containers(spawn.room).length
@@ -43,10 +43,6 @@ module.exports.loop = function () {
 
     for(var name in Game.creeps) {
         const creep = Game.creeps[name]
-        // const role = name.split(/(\w+)/)
-        // console.log(role[1])
-        // creep.memory.role = role[1]
-
 
         if(creep.memory.role == upgrader.role) upgrader.run(creep)
         else if(creep.memory.role == maintenance.role) maintenance.run(creep)

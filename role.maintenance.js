@@ -2,13 +2,14 @@
  * MAINTENANCE CREEP (WORK, CARRY, MOVE):
  *
  * - harvests and transfers energy to structures in need
- * - builds (work on construction sites)
+ * - works on construction sites
  * - repairs damaged structures
  */
 
 const loop = require('loop')
-const {randomObject, containers, damage} = require('room')
-const {sinks, sources, constructionSites, damagedStructures} = require('room')
+const {randomObject, damage} = require('room')
+const {sinks, constructionSites, damagedStructures} = require('room')
+const {acquireEnergy} = require('task.composite')
 
 const nextTask = creep => {
   // Keep harvesting until fully loaded:
@@ -31,10 +32,6 @@ const nextTask = creep => {
       const repairers = _.filter(Game.creeps, creep => creep.memory.task && creep.memory.task.id === 'repair')
       const sites = _.map(repairers, creep => creep.memory.task.targetId)
       const targets = _.filter(damagedStructures(creep.room), target => sites.indexOf(target.id) === -1)
-
-      // console.log('#damages: ' + targets.length)
-      // _.forEach(targets, target => console.log(target, damage(target)))
-
       if(targets.length > 0) return { id: 'repair', targetId: targets[0].id }
     }
 
@@ -42,23 +39,7 @@ const nextTask = creep => {
     return { id: 'upgrade-controller' }
 
   }
-  else {
-
-    {
-      const targets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }})
-      if(targets.length > 0) return { id: 'pickup', targetId: randomObject(targets).id }
-    }
-
-    {
-      const targets = _.filter(containers(creep.room), c => c.store[RESOURCE_ENERGY] > 0)
-      if(targets.length > 0) return { id: 'withdraw', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
-    }
-
-    {
-      const targets = sources(creep.room)
-      if(targets.length > 0) return { id: 'harvest', targetId: randomObject(targets).id }
-    }
-  }
+  else return acquireEnergy(creep)
 }
 
 
