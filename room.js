@@ -9,7 +9,8 @@ const damage = target => target.hits / target.hitsMax
 
 const hasLowEnergy = target =>
   ( target.structureType == STRUCTURE_EXTENSION ||
-    target.structureType == STRUCTURE_SPAWN
+    target.structureType == STRUCTURE_SPAWN ||
+    target.structureType == STRUCTURE_TOWER
   ) && target.energy < target.energyCapacity
 
 const isCritical = target =>
