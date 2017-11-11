@@ -1,13 +1,18 @@
-const {transfer, harvest} = require('commands')
-const {isFullyCharged, needsEnergy} = require('resource')
-const {sources, spawn} = require('room')
+/**
+ * HARVESTER CREEP (WORK, MOVE)
+ *
+ * Harvests energy and drops it in container (hopefully).
+ */
 
-const run = creep => {
-    creep.memory.targetId = creep.memory.targetId || sources(creep)[1].id
-    const target = Game.getObjectById(creep.memory.targetId)
-    harvest(creep, target)
+const loop = require('loop')
+const {sources, randomObject} = require('room')
+
+const nextTask = creep => {
+  const targets = sources(creep.room)
+  if(targets.length > 0) return { id: 'harvest', targetId: randomObject(targets).id }
 }
 
 module.exports = {
-    run: run
+  role: 'harvester',
+  run: loop(nextTask)
 }

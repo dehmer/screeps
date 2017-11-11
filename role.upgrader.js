@@ -1,25 +1,16 @@
-const commands = require('commands')
-const {isFullyCharged} = require('resource')
+const loop = require('loop')
+const {randomObject} = require('room')
+const {sources} = require('room')
 
-const run = creep => {
-
-  // Decide initial state if necessary.
-  if(!creep.memory.task) {
-    if(creep.carry.energy > 0) creep.memory.task = 'upgrade'
-    else creep.memory.task = 'harvest'
-  }
-
-  if(creep.memory.task == 'harvest') {
-    var sources = creep.room.find(FIND_SOURCES);
-    commands.harvest(creep, sources[0])
-    if(isFullyCharged(creep)) creep.memory.task = 'upgrade'
-  }
+const nextTask = creep => {
+  if(creep.carry.energy) return { id: 'upgrade-controller' }
   else {
-    if(!creep.carry.energy) return creep.memory.task = 'harvest'
-    commands.upgradeController(creep)
+    const targets = sources(creep.room)
+    if(targets.length > 0) return { id: 'harvest', targetId: randomObject(targets).id }
   }
 }
 
 module.exports = {
-  run: run
+  role: 'upgrader',
+  run: loop(nextTask)
 }

@@ -1,8 +1,8 @@
-const roleWorker = require('role.worker')
-const roleHarvester = require('role.harvester')
-const roleUpgrader = require('role.upgrader')
-const roleBuilder = require('role.builder')
-const roleTanker = require('role.tanker')
+const {containers} = require('room')
+const upgrader = require('role.upgrader')
+const maintenance = require('role.maintenance')
+const fixer = require('role.fixer')
+const harvester = require('role.harvester')
 
 const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
 
@@ -21,32 +21,31 @@ const creepFactory = (spawn, role, body, targetCount) => () => {
     }
 }
 
-printRooms = () => {
-    for(var name in Game.creeps) {
-        const creep = Game.creeps[name]
-        console.log(`${creep}: room = ${creep.room}`)
-    }
-}
-
 module.exports.loop = function () {
-
+    // Free memory of deceased creeps:
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) delete Memory.creeps[name];
     }
 
     const spawn = Game.spawns['Spawn1']
 
-    const lightMaintenance = [WORK, CARRY, MOVE]
-    const mediumMaintenance = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
-    const heavyMaintenance = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
-    const harvesterBody = [WORK, WORK, MOVE]
+    const lightBody = [MOVE, MOVE, WORK, CARRY]
+    const mediumBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
+    const heavyBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
 
-    creepFactory(spawn, 'tanker', mediumMaintenance, 5)()
-    creepFactory(spawn, 'upgrader', mediumMaintenance, 3)()
+    creepFactory(spawn, upgrader.role, mediumBody, 2)()
+    creepFactory(spawn, maintenance.role, mediumBody, 6)()
+    creepFactory(spawn, fixer.role, lightBody, 1)()
+
+    // TODO: maintain as many static harvesters as containers:
+    const containerCount = containers(spawn.room).length
+    creepFactory(spawn, harvester.role, [WORK, MOVE], containerCount)()
 
     for(var name in Game.creeps) {
         const creep = Game.creeps[name]
-        if(creep.memory.role == 'tanker') roleTanker.run(creep)
-        else if(creep.memory.role == 'upgrader') roleUpgrader.run(creep)
+        if(creep.memory.role == upgrader.role) upgrader.run(creep)
+        else if(creep.memory.role == maintenance.role) maintenance.run(creep)
+        else if(creep.memory.role == fixer.role) fixer.run(creep)
+        else if(creep.memory.role == harvester.role) harvester.run(creep)
     }
 }
