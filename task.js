@@ -1,4 +1,3 @@
-
 const assignTask = (creep, task) => { creep.memory.task = task; return task }
 const clearTask = (creep, reason) => {
   if(reason) console.log('clearing task. ' + reason)

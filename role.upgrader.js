@@ -6,4 +6,9 @@ const nextTask = creep => {
   else return acquireEnergy(creep)
 }
 
-module.exports = { name: 'upgrader', nextTask: nextTask }
+const ROLE = 'upgrader'
+
+module.exports = {
+  name: ROLE,
+  nextTask: nextTask
+}

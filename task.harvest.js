@@ -1,5 +1,4 @@
 const {object, clearTask} = require('task')
-const {containers} = require('room')
 
 // Static harvesters don't carry anything, so this is always false.
 const isFullyLoaded = (creep, resource) =>
@@ -7,6 +6,7 @@ const isFullyLoaded = (creep, resource) =>
   creep.carry[resource] === creep.carryCapacity
 
 const harvest = targetId => creep => {
+  const {containers} = require('room.ops')(creep.room)
   const target = object(targetId)
 
   // Special case: static harvesting.

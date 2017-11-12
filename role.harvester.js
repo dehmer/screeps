@@ -5,9 +5,9 @@
  */
 
 const loop = require('loop')
-const {sources, randomObject, containers} = require('room')
 
 const nextTask = creep => {
+  const {energyProviders, containers} = require('room.ops')(creep.room)
 
   const isIncluded = (targets, pos) => _.some(targets, target => target.pos.isEqualTo(pos))
   const targets = containers(creep.room)
@@ -31,4 +31,8 @@ const nextTask = creep => {
   }
 }
 
-module.exports = { name: 'harvester', nextTask: nextTask }
+const ROLE = 'harvester'
+module.exports = {
+  name: ROLE,
+  nextTask: nextTask
+}

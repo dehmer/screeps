@@ -7,14 +7,16 @@
  */
 
 const loop = require('loop')
-const {randomObject, sinks, constructionSites} = require('room')
+const {randomObject} = require('combinators')
 const {acquireEnergy, repairDamagedStructure} = require('task.composite')
 
 const nextTask = creep => {
+  const {energyConsumers, constructionSites} = require('room.ops')(creep.room)
+
   // Keep harvesting until fully loaded:
   if(creep.carry.energy == creep.carryCapacity) {
     {
-      const targets = sinks(creep.room)
+      const targets = energyConsumers(creep.room)
       if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
     }
 
@@ -25,8 +27,12 @@ const nextTask = creep => {
       if(targets.length > 0) return { id: 'build', targetId: randomObject(targets).id }
     }
 
-    const repairTask = repairDamagedStructure(creep)
-    if(repairTask) return repairTask
+    // TODO: make dependent on DEFCON level
+    if(random > 0.4) {
+      const repairTask = repairDamagedStructure(creep)
+      if(repairTask) return repairTask
+
+    }
 
     // Still nothing to do? Upgrade contoller!
     return { id: 'upgrade-controller' }
@@ -35,4 +41,8 @@ const nextTask = creep => {
   else return acquireEnergy(creep)
 }
 
-module.exports = { name: 'maintenance', nextTask: nextTask }
+const ROLE = 'maintenance'
+module.exports = {
+  name: ROLE,
+  nextTask: nextTask
+}

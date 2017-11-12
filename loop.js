@@ -28,7 +28,10 @@ const loop = taskFactory => creep => {
   assignTask(creep, task)
   K(tasks[task.id])(definition => {
     if(definition) definition.invoke(task)(creep)
-    else console.log('unsupported task', task.id)
+    else {
+      console.log('unsupported task', task.id)
+      clearTask(creep)
+    }
   })
 }
 

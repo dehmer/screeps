@@ -1,7 +1,4 @@
-const {randomObject} = require('room')
-const {containers, sources} = require('room')
-const {criticalInfrastructure, damagedStructures} = require('room')
-
+const {randomObject} = require('combinators')
 const {firstTaskOf} = require('task')
 
 /**
@@ -16,6 +13,7 @@ const pickupDroppedEnergy = creep => {
  * Withdraw energy from container.
  */
 const withdrawFromContainer = creep => {
+  const {containers} = require('room.ops')(creep.room)
   const targets = _.filter(containers(creep.room), c => c.store[RESOURCE_ENERGY] > 200)
   if(targets.length > 0) return { id: 'withdraw', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
 }
@@ -24,7 +22,8 @@ const withdrawFromContainer = creep => {
  * Harvest energy from source.
  */
 const harvestSource = creep => {
-  const targets = sources(creep.room)
+  const {energyProviders} = require('room.ops')(creep.room)
+  const targets = energyProviders()
   if(targets.length > 0) return { id: 'harvest', targetId: randomObject(targets).id }
 }
 
@@ -34,14 +33,16 @@ const harvestSource = creep => {
  * filter targets currently in repair by other creeps.
  */
 const repairDamagedStructure = creep => {
+  const {damages} = require('room.ops')(creep.room)
   const repairers = _.filter(Game.creeps, creep => creep.memory.task && creep.memory.task.id === 'repair')
   const sites = _.map(repairers, creep => creep.memory.task.targetId)
-  const targets = _.filter(damagedStructures(creep.room), target => sites.indexOf(target.id) === -1)
+  const targets = _.filter(damages(), target => sites.indexOf(target.id) === -1)
   if(targets.length > 0) return { id: 'repair', targetId: targets[0].id }
 }
 
 const repairCriticalInfrastructure = creep => {
-  const targets = criticalInfrastructure(creep.room)
+  const {criticalDamages} = require('room.ops')(creep.room)
+  const targets = criticalDamages()
   if(targets.length > 0) return { id: 'repair', targetId: randomObject(targets).id }
 }
 
