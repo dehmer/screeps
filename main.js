@@ -1,11 +1,19 @@
 const {K} = require('combinators')
 const loop = require('loop')
-
-const upgrader = require('role.upgrader')
-const maintenance = require('role.maintenance')
-const fixer = require('role.fixer')
-const harvester = require('role.harvester')
 const tower = require('tower.ops')
+const energy = require('energy')
+
+const SUPPORTED_ROLES = [
+    'upgrader',
+    'maintenance',
+    'fixer',
+    'harvester',
+    'hauler'
+]
+
+const roles = _(SUPPORTED_ROLES)
+    .map(role => require(`role.${role}`))
+    .reduce((acc, role) => K(acc)(acc => acc[role.name] = role), {})
 
 const creepFactory = (spawn, role, body, targetCount) => () => {
     const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
@@ -31,35 +39,27 @@ module.exports.loop = function () {
         if(!Game.creeps[name]) delete Memory.creeps[name];
     }
 
-    // TODO: Choose bodies depending on available energy.
-    const lightBody = [MOVE, MOVE, WORK, CARRY]
-    const mediumBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
-    const heavyBody = [MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY, MOVE, MOVE, WORK, CARRY]
+    // TODO: Choose bodies depending on available energy/work.
+    const body = n => _.flatten(_.times(n, _.constant([MOVE, MOVE, WORK, CARRY])))
 
     _.forEach(Game.rooms, room => {
         const ops = require('room.ops')(room)
         const spawn = ops.spawn()
 
-        // Spawn creeps on per room basis:
+        // TODO: spawning should be dynamic and aligned with room conditions.
         const containerCount = ops.containers().length
-        creepFactory(spawn, maintenance.name, mediumBody, 3)()
-        creepFactory(spawn, upgrader.name, mediumBody, 2)()
-        creepFactory(spawn, fixer.name, lightBody, 2)()
-        creepFactory(spawn, harvester.name, [WORK, WORK, MOVE], containerCount)()
+        creepFactory(spawn, 'upgrader', body(1), 1)()
+        creepFactory(spawn, 'maintenance', body(1), 2)()
+        creepFactory(spawn, 'hauler', body(1), 3)()
+        creepFactory(spawn, 'fixer', body(1), 2)()
+        creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
 
         // Process towers on room:
         _.forEach(ops.towers(), x => tower(x))
-    })
 
-    const roles = {}
-    roles[upgrader.name]    = upgrader
-    roles[maintenance.name] = maintenance
-    roles[fixer.name]       = fixer
-    roles[harvester.name]   = harvester
-
-    // creep loop:
-    _.forEach(Game.creeps, creep => {
-        const role = roles[creep.memory.role]
-        if(role) loop(role.nextTask)(creep)
+        ops.creeps().forEach(creep => {
+            const role = roles[creep.memory.role]
+            if(role) loop(role.nextTask)(creep)
+        })
     })
 }

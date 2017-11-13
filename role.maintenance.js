@@ -15,34 +15,48 @@ const nextTask = creep => {
 
   // Keep harvesting until fully loaded:
   if(creep.carry.energy == creep.carryCapacity) {
+
+    // First serve consumer:
     {
-      const targets = energyConsumers(creep.room)
+      const targets = energyConsumers()
       if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
     }
 
-    // Devide building (80%) and repairing (20%):
     const random = Math.random()
+
     if(random > 0.2) {
-      const targets = constructionSites(creep.room)
+      const targets = constructionSites()
       if(targets.length > 0) return { id: 'build', targetId: randomObject(targets).id }
     }
 
-    // TODO: make dependent on DEFCON level
-    if(random > 0.4) {
-      const repairTask = repairDamagedStructure(creep)
-      if(repairTask) return repairTask
-
+    const repairTask = repairDamagedStructure(creep)
+    if(repairTask) return repairTask
+  }
+  else {
+    if(creep.room.storage) {
+      const storage = creep.room.storage
+      if(storage.store[RESOURCE_ENERGY] > 10000) {
+        return { id: 'withdraw', targetId: storage.id, resource: RESOURCE_ENERGY }
+      }
     }
 
-    // Still nothing to do? Upgrade contoller!
-    return { id: 'upgrade-controller' }
-
+    return acquireEnergy(creep)
   }
-  else return acquireEnergy(creep)
 }
 
 const ROLE = 'maintenance'
+
+const spawn = (room, factory) => {
+    const {creeps} = require('room.ops')(room)
+    const headCount = 2
+    const body = [MOVE, WORK, CARRY]
+    if(headCount > creeps(ROLE).length) {
+        factory(body, `${ROLE}-${Game.time}`, {memory: {role: ROLE}})
+    }
+}
+
 module.exports = {
   name: ROLE,
-  nextTask: nextTask
+  nextTask: nextTask,
+  spawn: spawn
 }

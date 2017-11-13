@@ -44,7 +44,15 @@ module.exports = room => {
         energyConsumers: () => room.find(FIND_STRUCTURES, { filter: needsEnergy }),
         containers: () => room.find(FIND_STRUCTURES, { filter: isContainer }),
         towers: () => room.find(FIND_STRUCTURES, { filter: isTower }),
-        creeps: role => room.find(FIND_MY_CREEPS, { filter: creep => creep.memory.role === role }),
+
+        /**
+         * All creeps or creeps with given role.
+         */
+        creeps: role => {
+            const filter = role ? creep => creep.memory.role === role : () => true
+            return room.find(FIND_MY_CREEPS, { filter: filter })
+        },
+
         spawn: () => room.find(FIND_MY_SPAWNS)[0],
 
         constructionSites: () =>
@@ -64,6 +72,5 @@ module.exports = room => {
             const filter = target => isDamaged(target) && isCritical(room.memory.defcon)(target)
             return damages(room, filter)
         }
-
     }
 }
