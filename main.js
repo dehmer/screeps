@@ -46,11 +46,22 @@ module.exports.loop = function () {
         const ops = require('room.ops')(room)
         const spawn = ops.spawn()
 
+        // Store energy metrics every 10 ticks.
+        // Limited to 20 slots (ring buffer)
+        if(Game.time % 10 === 0) {
+            Memory.metrics = Memory.metrics || {}
+            Memory.metrics[room.name] = Memory.metrics[room.name] || []
+            Memory.metrics[room.name].push(energy.metrics(room))
+            if(Memory.metrics[room.name].length > 20) Memory.metrics[room.name].shift()
+        }
+
+        // _.forEach(Memory.metrics[room.name], m => console.log(JSON.stringify(m)))
+
         // TODO: spawning should be dynamic and aligned with room conditions.
         const containerCount = ops.containers().length
-        creepFactory(spawn, 'upgrader', body(1), 1)()
+        creepFactory(spawn, 'upgrader', body(2), 3)()
         creepFactory(spawn, 'maintenance', body(1), 2)()
-        creepFactory(spawn, 'hauler', body(1), 3)()
+        creepFactory(spawn, 'hauler', body(1), 4)()
         creepFactory(spawn, 'fixer', body(1), 2)()
         creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
 
@@ -58,6 +69,8 @@ module.exports.loop = function () {
         _.forEach(ops.towers(), x => tower(x))
 
         ops.creeps().forEach(creep => {
+            delete Memory.memory
+
             const role = roles[creep.memory.role]
             if(role) loop(role.nextTask)(creep)
         })

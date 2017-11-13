@@ -13,7 +13,7 @@ const metrics = room => {
     if(room.storage) storage.push(room.storage)
 
     return {
-        roomName: room.name,
+        time: Game.time,
         roomEnergy: room.energyAvailable,
         energyCapacity: room.energyCapacityAvailable,
         sourceCount: sources.length,

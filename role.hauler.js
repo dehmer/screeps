@@ -19,14 +19,17 @@ const nextTask = creep => {
     }
   }
   else {
-    // TODO: target containers with most energy first.
-    const busyTargets = _.filter(creeps(ROLE), c => {
-      return c.memory.task && c.memory.task.id === 'withdraw'
-    }).map(c => c.memory.task.targetId)
+    // Choose container with most energy, not already addressed by other hauler.
 
-    const targets = containers()
+    const busyTargetIds = _
+      .filter(creeps(ROLE), c => c.memory.task && c.memory.task.id === 'withdraw')
+      .map(c => c.memory.task.targetId)
 
-    return { id: 'withdraw', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
+    const targets = _
+      .filter(containers(), c => !(_.includes(busyTargetIds, c.id)))
+      .sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY])
+
+    if(targets.length > 0) return { id: 'withdraw', targetId: targets[0].id, resource: RESOURCE_ENERGY }
   }
 }
 
