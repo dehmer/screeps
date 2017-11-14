@@ -9,12 +9,22 @@ const {randomObject} = require('combinators')
 const {acquireEnergy, repairStuff} = require('task.composite')
 
 const nextTask = creep => {
+  const {energyConsumers, constructionSites} = require('room.ops')(creep.room)
   if(creep.carry.energy) {
-    const {towers} = require('room.ops')(creep.room)
 
-    // Keep tower energized as good as possible:
-    const targets = _.filter(towers(creep.room), tower => tower.energy < tower.energyCapacity)
-    if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
+    // First serve consumer:
+    {
+      const targets = energyConsumers()
+      if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
+    }
+
+    {
+      // Keep tower energized as good as possible:
+      const {towers} = require('room.ops')(creep.room)
+      const targets = _.filter(towers(creep.room), tower => tower.energy < tower.energyCapacity)
+      if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
+    }
+
 
     const repairTask = repairStuff(creep)
     if(repairTask) return repairTask

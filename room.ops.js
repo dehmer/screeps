@@ -4,8 +4,8 @@ const isTower = isStructureType(STRUCTURE_TOWER)
 const isDamaged = target => target.hits < target.hitsMax
 
 const needsEnergy = target => (
-        target.structureType == STRUCTURE_EXTENSION ||
         target.structureType == STRUCTURE_SPAWN ||
+        target.structureType == STRUCTURE_EXTENSION ||
         target.structureType == STRUCTURE_TOWER
     ) && target.energy < target.energyCapacity
 

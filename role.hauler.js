@@ -10,9 +10,17 @@ const ROLE = 'hauler'
 
 const nextTask = creep => {
   const {creeps, containers} = require('room.ops')(creep.room)
+  const {energyConsumers, constructionSites} = require('room.ops')(creep.room)
 
   if(creep.carry.energy == creep.carryCapacity) {
     const storage = creep.room.storage
+
+    // First serve consumer:
+    {
+      const targets = energyConsumers()
+      if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
+    }
+
     if(storage) {
       const total = _.sum(creep.room.storage.store)
       if(total < storage.storeCapacity) return { id: 'transfer', targetId: storage.id, resource: RESOURCE_ENERGY }

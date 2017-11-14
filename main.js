@@ -4,11 +4,8 @@ const tower = require('tower.ops')
 const energy = require('energy')
 
 const SUPPORTED_ROLES = [
-    'upgrader',
-    'maintenance',
-    'fixer',
-    'harvester',
-    'hauler'
+    'upgrader', 'maintenance', 'fixer',
+    'harvester', 'hauler'
 ]
 
 const roles = _(SUPPORTED_ROLES)
@@ -46,6 +43,13 @@ module.exports.loop = function () {
         const ops = require('room.ops')(room)
         const spawn = ops.spawn()
 
+        // const walls = room
+        //     .find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_WALL})
+        //     .sort((a, b) => a.hits - b.hits)
+        // console.log('walls', walls.length)
+        // _.forEach(walls, wall => console.log(wall.hits))
+
+
         // Store energy metrics every 10 ticks.
         // Limited to 20 slots (ring buffer)
         if(Game.time % 10 === 0) {
@@ -60,10 +64,11 @@ module.exports.loop = function () {
         // TODO: spawning should be dynamic and aligned with room conditions.
         const containerCount = ops.containers().length
         creepFactory(spawn, 'upgrader', body(2), 3)()
-        creepFactory(spawn, 'maintenance', body(1), 2)()
+        creepFactory(spawn, 'maintenance', body(2), 3)()
         creepFactory(spawn, 'hauler', body(1), 4)()
-        creepFactory(spawn, 'fixer', body(1), 2)()
+        creepFactory(spawn, 'fixer', body(1), 3)()
         creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
+        creepFactory(spawn, 'dummy', body(1), 1)()
 
         // Process towers on room:
         _.forEach(ops.towers(), x => tower(x))
