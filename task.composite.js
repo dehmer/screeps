@@ -1,31 +1,6 @@
 const {randomObject} = require('combinators')
 const {firstTaskOf} = require('task')
-
-/**
- * Pickup dropped energy.
- */
-const pickupDroppedEnergy = creep => {
-  const targets = creep.room.find(FIND_DROPPED_RESOURCES, { filter: { resourceType: RESOURCE_ENERGY }})
-  if(targets.length > 0) return { id: 'pickup', targetId: randomObject(targets).id }
-}
-
-/**
- * Withdraw energy from container.
- */
-const withdrawFromContainer = creep => {
-  const {containers} = require('room.ops')(creep.room)
-  const targets = _.filter(containers(creep.room), c => c.store[RESOURCE_ENERGY] > 200)
-  if(targets.length > 0) return { id: 'withdraw', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
-}
-
-/**
- * Harvest energy from source.
- */
-const harvestSource = creep => {
-  const {energyProviders} = require('room.ops')(creep.room)
-  const targets = energyProviders()
-  if(targets.length > 0) return { id: 'harvest', targetId: randomObject(targets).id }
-}
+const {findSources} = require('energy')
 
 /**
  * Repair damaged structures.
@@ -48,7 +23,6 @@ const repairCriticalInfrastructure = creep => {
 
 // (Mostly) higher level tasks:
 module.exports = {
-  acquireEnergy: firstTaskOf([pickupDroppedEnergy, withdrawFromContainer, harvestSource]),
   repairDamagedStructure: repairDamagedStructure,
   repairStuff: firstTaskOf([repairCriticalInfrastructure, repairDamagedStructure])
 }

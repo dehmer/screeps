@@ -1,7 +1,7 @@
 const {K} = require('combinators')
 const loop = require('loop')
 const tower = require('tower.ops')
-const energy = require('energy')
+const {metrics, findContainers} = require('energy')
 
 const SUPPORTED_ROLES = [
     'upgrader', 'maintenance', 'fixer',
@@ -43,7 +43,7 @@ module.exports.loop = function () {
         if(Game.time % 10 === 0) {
             Memory.metrics = Memory.metrics || {}
             Memory.metrics[room.name] = Memory.metrics[room.name] || []
-            Memory.metrics[room.name].push(energy.metrics(room))
+            Memory.metrics[room.name].push(metrics(room))
             if(Memory.metrics[room.name].length > 20) Memory.metrics[room.name].shift()
         }
 
@@ -54,7 +54,7 @@ module.exports.loop = function () {
         const body = n => _.flatten(_.times(n, _.constant([MOVE, MOVE, WORK, CARRY])))
 
         // TODO: spawning should be dynamic and aligned with room conditions.
-        const containerCount = ops.containers().length
+        const containerCount = findContainers(room).length
         creepFactory(spawn, 'upgrader', body(2), 4)()
         creepFactory(spawn, 'maintenance', body(2), 5)()
         creepFactory(spawn, 'hauler', body(1), 4)()

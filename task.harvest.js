@@ -1,4 +1,5 @@
 const {object, clearTask} = require('task')
+const {findContainers} = require('energy')
 
 // Static harvesters don't carry anything, so this is always false.
 const isFullyLoaded = (creep, resource) =>
@@ -12,7 +13,7 @@ const harvest = targetId => creep => {
   // Special case: static harvesting.
   // Stop harvesting if container beneath creep is full.
   if(creep.memory.role === 'harvester') {
-    const targets = containers(creep.room)
+    const targets = findContainers(creep.room)
     const container = _.find(targets, target => target.pos.isEqualTo(creep.pos))
     if(container && container.storeCapacity === container.store[RESOURCE_ENERGY]) {
       clearTask(creep)

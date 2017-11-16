@@ -10,6 +10,7 @@ const withdraw = (targetId, resource) => creep => {
     switch(result) {
       case ERR_BUSY: /* don't care */ break
       case ERR_NOT_ENOUGH_RESOURCES: return clearTask(creep)
+      case ERR_INVALID_TARGET: return  clearTask(creep)
       case ERR_FULL: return clearTask(creep)
       case ERR_NOT_IN_RANGE: creep.moveTo(target); break
       default: console.log('[withdraw] unhandled', result)

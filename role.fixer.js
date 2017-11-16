@@ -6,17 +6,18 @@
 
 const loop = require('loop')
 const {randomObject} = require('combinators')
-const {acquireEnergy, repairStuff} = require('task.composite')
+const {repairStuff} = require('task.composite')
+const {findConsumers, acquireEnergy, ENERGY_TIER_4} = require('energy')
 
 const ROLE = 'fixer'
 
 const nextTask = creep => {
-  const {energyConsumers, constructionSites} = require('room.ops')(creep.room)
+  const {constructionSites} = require('room.ops')(creep.room)
   if(creep.carry.energy) {
 
     // First serve consumer:
     {
-      const targets = energyConsumers()
+      const targets = findConsumers(creep.room)
       if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
     }
 
@@ -34,16 +35,7 @@ const nextTask = creep => {
     // Still nothing to do? Upgrade contoller!
     return { id: 'upgrade-controller' }
   }
-  else {
-    if(creep.room.storage) {
-      const storage = creep.room.storage
-      if(storage.store[RESOURCE_ENERGY] > 10000) {
-        return { id: 'withdraw', targetId: storage.id, resource: RESOURCE_ENERGY }
-      }
-    }
-
-    return acquireEnergy(creep)
-  }
+  else return acquireEnergy(ENERGY_TIER_4)(creep)
 }
 
 module.exports = {

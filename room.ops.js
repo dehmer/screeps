@@ -40,9 +40,6 @@ module.exports = room => {
     return {
         defcon: () => room.memory.defcon || DEFCON_5,
         rcl: () => room.controller.level,
-        energyProviders: () => room.find(FIND_SOURCES),
-        energyConsumers: () => room.find(FIND_STRUCTURES, { filter: needsEnergy }),
-        containers: () => room.find(FIND_STRUCTURES, { filter: isContainer }),
         towers: () => room.find(FIND_STRUCTURES, { filter: isTower }),
 
         /**

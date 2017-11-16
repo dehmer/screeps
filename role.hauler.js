@@ -3,21 +3,21 @@
  *
  * - move energy between source and storage
  */
-const {acquireEnergy} = require('task.composite')
 const {randomObject} = require('combinators')
+const {findContainers, findConsumers} = require('energy')
 
 const ROLE = 'hauler'
 
 const nextTask = creep => {
-  const {creeps, containers} = require('room.ops')(creep.room)
-  const {energyConsumers, constructionSites} = require('room.ops')(creep.room)
+  const {creeps} = require('room.ops')(creep.room)
+  const {constructionSites} = require('room.ops')(creep.room)
 
   if(creep.carry.energy == creep.carryCapacity) {
     const storage = creep.room.storage
 
     // First serve consumer:
     {
-      const targets = energyConsumers()
+      const targets = findConsumers(creep.room)
       if(targets.length > 0) return { id: 'transfer', targetId: randomObject(targets).id, resource: RESOURCE_ENERGY }
     }
 
@@ -34,7 +34,7 @@ const nextTask = creep => {
       .map(c => c.memory.task.targetId)
 
     const targets = _
-      .filter(containers(), c => !(_.includes(busyTargetIds, c.id)))
+      .filter(findContainers(creep.room), c => !(_.includes(busyTargetIds, c.id)))
       .sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY])
 
     if(targets.length > 0) return { id: 'withdraw', targetId: targets[0].id, resource: RESOURCE_ENERGY }
