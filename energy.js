@@ -1,8 +1,47 @@
+const {randomObject} = require('combinators')
+
 // We have up to four tiers providing or buffering energy.
 // Tier 1: dropped energy.
 // Tier 2: energy sources.
 // Tier 3: energy buffered in containers.
 // Tier 4: energy buffered in storage.
+
+/**
+ * Pickup dropped energy.
+ */
+const pickupDroppedEnergy = creep => {
+    const filter = { filter: { resourceType: RESOURCE_ENERGY } }
+    const targets = creep.room.find(FIND_DROPPED_RESOURCES, filter)
+    if(targets.length > 0) return {
+        id: 'pickup',
+        targetId: randomObject(targets).id
+    }
+}
+
+/**
+ * Withdraw energy from container.
+ */
+const withdrawFromContainer = creep => {
+    const filter = { filter: { structureType: STRUCTURE_CONTAINER } }
+    const containers = creep.room.find(FIND_STRUCTURES, filter)
+    const targets = _.filter(containers, c => c.store[RESOURCE_ENERGY] > 200)
+    if(targets.length > 0) return {
+        id: 'withdraw',
+        targetId: randomObject(targets).id,
+        resource: RESOURCE_ENERGY
+    }
+}
+
+/**
+ * Harvest energy from source.
+ */
+const harvestSource = creep => {
+    const targets = creep.room.find(FIND_SOURCES)
+    if(targets.length > 0) return {
+        id: 'harvest',
+        targetId: randomObject(targets).id
+    }
+}
 
 const metrics = room => {
     const ops = require('room.ops')(room)
@@ -15,7 +54,7 @@ const metrics = room => {
     return {
         time: Game.time,
         roomEnergy: room.energyAvailable,
-        energyCapacity: room.energyCapacityAvailable,
+        roomCapacity: room.energyCapacityAvailable,
         sourceCount: sources.length,
         sourceEnergy: _.sum(sources, s => s.energy),
         sourceCapacity: _.sum(sources, s => s.energyCapacity),

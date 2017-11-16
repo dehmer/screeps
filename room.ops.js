@@ -71,6 +71,8 @@ module.exports = room => {
         criticalDamages: () => {
             const filter = target => isDamaged(target) && isCritical(room.memory.defcon)(target)
             return damages(room, filter)
-        }
+        },
+
+        perimeter: () => _.filter(Object.keys(Game.flags), name => name.startsWith('PERIMETER'))
     }
 }

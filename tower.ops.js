@@ -8,26 +8,28 @@ const run = tower => {
         // TODO: gather enemy intel
         // TODO: lower DEFCON on enemy sighting
 
-        // Records attack information:
-        Memory.attacks = Memory.attacks || []
-        Memory.attacks.push({
-            rep_dttm: Game.time,
-            rep_org: {
-                id: tower.id,
-                type: tower.structureType,
-                energy: tower.energy,
-                hits: tower.hits
-            },
-            room: hostileCreep.room.name,
-            creep: {
-                id: hostileCreep.id,
-                name: hostileCreep.name,
-                body: hostileCreep.body,
-                varry: hostileCreep.carry,
-                owner: hostileCreep.owner,
-                memory: hostileCreep.memory
-            }
-        })
+        // // Records attack information:
+        // Memory.attacks = Memory.attacks || []
+
+        // // TODO: stop recording after first sighting.
+        // Memory.attacks.push({
+        //     rep_dttm: Game.time,
+        //     rep_org: {
+        //         id: tower.id,
+        //         type: tower.structureType,
+        //         energy: tower.energy,
+        //         hits: tower.hits
+        //     },
+        //     room: hostileCreep.room.name,
+        //     creep: {
+        //         id: hostileCreep.id,
+        //         name: hostileCreep.name,
+        //         body: hostileCreep.body,
+        //         carry: hostileCreep.carry,
+        //         owner: hostileCreep.owner,
+        //         memory: hostileCreep.memory
+        //     }
+        // })
 
         const result = tower.attack(hostileCreep)
         switch(result) {

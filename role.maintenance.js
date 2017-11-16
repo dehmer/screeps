@@ -24,7 +24,7 @@ const nextTask = creep => {
 
     const random = Math.random()
 
-    if(random > 0.2) {
+    {
       const targets = constructionSites()
       if(targets.length > 0) return { id: 'build', targetId: randomObject(targets).id }
     }

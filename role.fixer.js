@@ -8,6 +8,8 @@ const loop = require('loop')
 const {randomObject} = require('combinators')
 const {acquireEnergy, repairStuff} = require('task.composite')
 
+const ROLE = 'fixer'
+
 const nextTask = creep => {
   const {energyConsumers, constructionSites} = require('room.ops')(creep.room)
   if(creep.carry.energy) {
@@ -44,7 +46,6 @@ const nextTask = creep => {
   }
 }
 
-const ROLE = 'fixer'
 module.exports = {
   name: ROLE,
   nextTask: nextTask
