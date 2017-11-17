@@ -1,11 +1,11 @@
 const {object, clearTask, assignTask} = require('task')
+const {findPerimeter} = require('room')
 
 const patrol = flagName => creep => {
   const flag = Game.flags[flagName]
   const result = creep.moveTo(flag)
 
-  const {perimeter} = require('room.ops')(creep.room)
-  const wayPoints = _.map(perimeter(), name => Game.flags[name])
+  const wayPoints = _.map(findPerimeter(creep.room), name => Game.flags[name])
 
   switch(result) {
     case OK: break;

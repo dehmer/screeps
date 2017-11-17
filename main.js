@@ -1,7 +1,8 @@
 const {K} = require('combinators')
 const loop = require('loop')
-const tower = require('tower.ops')
+const {defendRoom} = require('room.defence')
 const {metrics, findContainers} = require('energy')
+const {findSpawn, findCreeps} = require('room')
 
 const SUPPORTED_ROLES = [
     'upgrader', 'maintenance', 'fixer',
@@ -35,8 +36,7 @@ module.exports.loop = function () {
     }
 
     _.forEach(Game.rooms, room => {
-        const ops = require('room.ops')(room)
-        const spawn = ops.spawn()
+        const spawn = findSpawn(room)
 
         // Store energy metrics every 10 ticks.
         // Limited to 20 slots (ring buffer)
@@ -55,22 +55,17 @@ module.exports.loop = function () {
 
         // TODO: spawning should be dynamic and aligned with room conditions.
         const containerCount = findContainers(room).length
-        creepFactory(spawn, 'upgrader', body(2), 4)()
-        creepFactory(spawn, 'maintenance', body(2), 5)()
+        creepFactory(spawn, 'maintenance', body(1), 1)()
         creepFactory(spawn, 'hauler', body(1), 4)()
-        creepFactory(spawn, 'fixer', body(1), 3)()
+        creepFactory(spawn, 'fixer', body(1), 2)()
         creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
+        creepFactory(spawn, 'upgrader', body(1), 1)()
         creepFactory(spawn, 'dummy', body(1), 0)()
 
-        // Process towers in room:
-        _.forEach(ops.towers(), x => tower(x))
+        // Defence:
+        defendRoom(room)
 
-        ops.creeps().forEach(creep => {
-            if(creep.name.startsWith('harvester')) creep.memory.role = 'harvester'
-            if(creep.name.startsWith('maintenance')) creep.memory.role = 'maintenance'
-            else if(creep.name.startsWith('fixer')) creep.memory.role = 'fixer'
-            else if(creep.name.startsWith('dummy')) creep.memory.role = 'maintenance-'
-
+        findCreeps(room).forEach(creep => {
             const role = roles[creep.memory.role]
             if(role) loop(role.nextTask)(creep)
         })

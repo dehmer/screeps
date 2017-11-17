@@ -6,6 +6,7 @@
 
 const loop = require('loop')
 const {findContainers} = require('energy')
+const ROLE = 'harvester'
 
 const nextTask = creep => {
   const isIncluded = (targets, pos) => _.some(targets, target => target.pos.isEqualTo(pos))
@@ -24,13 +25,12 @@ const nextTask = creep => {
     const capacity = container.store[RESOURCE_ENERGY] / container.storeCapacity
     if(capacity < 0.7) {
       // Find nearest source:
-      const target = creep.pos.findClosestByRange(FIND_SOURCES)
-      if(target) return { id: 'harvest', targetId: target.id }
+      const source = creep.pos.findClosestByRange(FIND_SOURCES)
+      if(source) return { id: 'harvest', targetId: source.id }
     }
   }
 }
 
-const ROLE = 'harvester'
 module.exports = {
   name: ROLE,
   nextTask: nextTask
