@@ -118,7 +118,7 @@ const repairCriticalInfrastructure = creep => {
 const spawnCreep = room => (body, name, opts) => {
   const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
   if(room.energyAvailable < bodyCosts(body)) return
-  const result = findSpawn(room).spawn(body, name, opts)
+  const result = findSpawn(room).spawnCreep(body, name, opts)
   switch(result) {
     case OK: return
     case ERR_BUSY: /* wait */ break

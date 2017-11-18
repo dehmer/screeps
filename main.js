@@ -2,12 +2,11 @@ const {K} = require('combinators')
 const loop = require('loop')
 const {defendRoom} = require('room.defence')
 const {metrics, findContainers} = require('energy')
-const {findSpawn, findCreeps} = require('room')
-const {spawnCreep} = require('room')
+const {findSpawn, findCreeps, spawnCreep} = require('room')
 
 const SUPPORTED_ROLES = [
   'upgrader', 'maintenance', 'fixer',
-  'harvester', 'hauler'
+  'harvester', 'hauler', 'claimer'
 ]
 
 const roles = _(SUPPORTED_ROLES)
@@ -39,10 +38,6 @@ module.exports.loop = function () {
   _.forEach(Game.rooms, room => {
     const spawn = findSpawn(room)
 
-    const HEALTH_EXCELLENT = 'excellent'
-    const HEALTH_GOOD = 'good'
-    const HEALTH_BAD = 'bad'
-
     // Structure maintenance:
     // Decaying structures except WALLS and RAMPARTS are maintained constantly.
     // Critical infrastructure must be repaired immediately.
@@ -65,13 +60,31 @@ module.exports.loop = function () {
 
     // TODO: spawning should be dynamic and aligned with room conditions.
 
-    const containerCount = findContainers(room).length
-    creepFactory(spawn, 'maintenance', body(1), 2)()
-    creepFactory(spawn, 'hauler', body(2), 3)()
-    creepFactory(spawn, 'fixer', body(1), 2)()
-    creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
-    creepFactory(spawn, 'upgrader', body(1), 1)()
-    creepFactory(spawn, 'dummy', body(1), 0)()
+    // We might have creeps in rooms without a spawn.
+    if(spawn) {
+      const containerCount = findContainers(room).length
+      creepFactory(spawn, 'maintenance', body(1), 3)()
+
+      // Even haulers have WORK parts so that they can upgrade controller.
+      creepFactory(spawn, 'hauler', body(2), 4)()
+      creepFactory(spawn, 'fixer', body(1), 2)()
+      creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
+      creepFactory(spawn, 'upgrader', body(2), 2)()
+
+      // {
+      //   const targetRoomName = 'W7N3'
+      //   const body = [MOVE, MOVE, MOVE, MOVE, CLAIM]
+      //   const name = `claimer-${targetRoomName}-${Game.time}`
+      //   const opts = { memory: {
+      //     role: 'claimer',
+      //     task: {
+      //       id: 'moveto.room',
+      //       targetRoomName: targetRoomName
+      //   }}}
+
+      //   spawn.spawnCreep(body, name, opts)
+      // }
+    }
 
     // Defence:
     defendRoom(room)

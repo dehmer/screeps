@@ -5,7 +5,7 @@
  */
 const {coalesce} = require('combinators')
 const {findContainers, transferEnergy} = require('energy')
-const {findCreeps} = require ('room')
+const {findCreeps, upgradeController} = require ('room')
 const ROLE = 'hauler'
 
 const restockStorageEnergy = creep => {
@@ -21,7 +21,7 @@ const restockStorageEnergy = creep => {
 }
 
 const nextTask = creep => {
-  const consumeEnergy = coalesce([transferEnergy, restockStorageEnergy])
+  const consumeEnergy = coalesce([transferEnergy, restockStorageEnergy, upgradeController])
   if(creep.carry.energy == creep.carryCapacity) return consumeEnergy(creep)
   else {
 
