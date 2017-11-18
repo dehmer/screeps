@@ -105,6 +105,9 @@ const transferEnergy = creep => {
   }
 }
 
+const storageEnergyRatio = room =>
+  room.storage.store[RESOURCE_ENERGY] / room.storage.storeCapacity
+
 const metrics = room => {
   const sources = room.find(FIND_SOURCES)
   const creeps = findCreeps(room)
@@ -126,8 +129,8 @@ const metrics = room => {
     containerEnergy: _(containers).map(c => c.store[RESOURCE_ENERGY]).sum(),
     containerCapacity: _(containers).map(c => c.storeCapacity).sum(),
     storageCount: storage.length,
-    storageEnergy: _(storage).map(c => c.store[RESOURCE_ENERGY]).sum(),
-    storageCapacity: _(storage).map(c => c.storeCapacity).sum()
+    storageEnergy: _(storage).map(s => s.store[RESOURCE_ENERGY]).sum(),
+    storageCapacity: _(storage).map(s => s.storeCapacity).sum()
   }
 }
 
@@ -144,5 +147,6 @@ module.exports = {
   acquireEnergy: acquireEnergy,
   transferEnergy: transferEnergy,
 
+  storageEnergyRatio: storageEnergyRatio,
   metrics: metrics
 }

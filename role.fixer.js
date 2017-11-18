@@ -1,16 +1,21 @@
 /**
  * FIXER CREEP (MOVE, CARRY, WORK):
  *
- * Fixes critical infrastructure first.
+ * Fixes critical infrastructure and fortifies defence,
+ * also builds stuff before fortification.
  */
 
 const {coalesce} = require('combinators')
-const {repair, upgradeController} = require('room')
+const {build, repairCriticalInfrastructure, fortify} = require('room')
 const {transferEnergy, acquireEnergy, ENERGY_TIER_4} = require('energy')
 const ROLE = 'fixer'
 
 const nextTask = creep => {
-  const consumeEnergy = coalesce([transferEnergy, repair, upgradeController])
+  const consumeEnergy = coalesce([
+    transferEnergy,
+    repairCriticalInfrastructure, build, fortify
+  ])
+
   if(creep.carry[RESOURCE_ENERGY]) return consumeEnergy(creep)
   return acquireEnergy(ENERGY_TIER_4)(creep)
 }

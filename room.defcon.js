@@ -12,9 +12,7 @@ const criticality = {}
 criticality[STRUCTURE_TOWER] = DEFCON_1
 criticality[STRUCTURE_STORAGE] = DEFCON_1
 criticality[STRUCTURE_SPAWN] = DEFCON_2
-criticality[STRUCTURE_RAMPART] = DEFCON_3
 criticality[STRUCTURE_EXTENSION] = DEFCON_5
-criticality[STRUCTURE_CONTAINER] = DEFCON_5
 
 const isCritical = defcon => target => criticality[target.structureType] <= defcon
 

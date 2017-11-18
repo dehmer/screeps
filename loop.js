@@ -4,7 +4,7 @@ const {assignTask, clearTask, loadTask, randomObject} = require('task')
 const SUPPORTED_TASKS = [
   'harvest', 'transfer', 'build', 'repair',
   'upgrade-controller', 'withdraw', 'pickup',
-  'moveto', 'patrol'
+  'moveto'
 ]
 
 const tasks = _(SUPPORTED_TASKS)
