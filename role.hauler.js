@@ -2,10 +2,12 @@
  * HAULER CREEP (WORK, CARRY, MOVE):
  *
  * - move energy between source and storage
+ * - build
+ * - upgrade controller
  */
 const {coalesce} = require('combinators')
 const {findContainers, transferEnergy} = require('energy')
-const {findCreeps, upgradeController} = require ('room')
+const {findCreeps, upgradeController, build} = require ('room')
 const {BODY_WORKER, bodySequence, name} = require('creep.body')
 const ROLE = 'hauler'
 
@@ -22,7 +24,7 @@ const restockStorageEnergy = creep => {
 }
 
 const nextTask = creep => {
-  const consumeEnergy = coalesce([transferEnergy, restockStorageEnergy, upgradeController])
+  const consumeEnergy = coalesce([transferEnergy, restockStorageEnergy, build, upgradeController])
   if(creep.carry.energy == creep.carryCapacity) return consumeEnergy(creep)
   else {
 

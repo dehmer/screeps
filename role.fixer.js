@@ -23,7 +23,7 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const targetCount = 2
+  const targetCount = 3
   const xs = findCreeps(room, ROLE)
 
   if(xs.length < targetCount) {
