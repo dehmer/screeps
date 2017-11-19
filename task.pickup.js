@@ -17,7 +17,7 @@ const pickup = targetId => creep => {
       const result = creep.moveTo(target)
       switch(result) {
         case OK: break
-        default: console.log('[moveTo] unhandled', result)
+        default: console.log('[moveto] unhandled', result)
       }
       break
     }

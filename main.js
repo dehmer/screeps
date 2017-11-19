@@ -30,6 +30,7 @@ const creepFactory = (spawn, role, body, targetCount) => () => {
 }
 
 module.exports.loop = function () {
+
   // Free memory of deceased creeps:
   for(var name in Memory.creeps) {
     if(!Game.creeps[name]) delete Memory.creeps[name];
@@ -37,11 +38,6 @@ module.exports.loop = function () {
 
   _.forEach(Game.rooms, room => {
     const spawn = findSpawn(room)
-
-    // Structure maintenance:
-    // Decaying structures except WALLS and RAMPARTS are maintained constantly.
-    // Critical infrastructure must be repaired immediately.
-    // Surplus energy is put into WALLS AND RAMPARTS (fortification).
 
     // Store energy metrics every 10 ticks.
     // Limited to 20 slots (ring buffer)
@@ -52,9 +48,6 @@ module.exports.loop = function () {
       if(Memory.metrics[room.name].length > 20) Memory.metrics[room.name].shift()
     }
 
-    // _.forEach(Memory.metrics[room.name], m => console.log(m.storageEnergy))
-    // _.forEach(Memory.metrics[room.name], m => console.log(JSON.stringify(m)))
-
     // TODO: Choose bodies depending on available energy/work.
     const body = n => _.flatten(_.times(n, _.constant([MOVE, MOVE, WORK, CARRY])))
 
@@ -63,27 +56,13 @@ module.exports.loop = function () {
     // We might have creeps in rooms without a spawn.
     if(spawn) {
       const containerCount = findContainers(room).length
-      creepFactory(spawn, 'maintenance', body(1), 3)()
+      creepFactory(spawn, 'maintenance', body(2), 3)()
 
       // Even haulers have WORK parts so that they can upgrade controller.
-      creepFactory(spawn, 'hauler', body(2), 4)()
+      creepFactory(spawn, 'hauler', body(3), 4)()
       creepFactory(spawn, 'fixer', body(1), 2)()
       creepFactory(spawn, 'harvester', [WORK, WORK, MOVE], containerCount)()
-      creepFactory(spawn, 'upgrader', body(2), 2)()
-
-      // {
-      //   const targetRoomName = 'W7N3'
-      //   const body = [MOVE, MOVE, MOVE, MOVE, CLAIM]
-      //   const name = `claimer-${targetRoomName}-${Game.time}`
-      //   const opts = { memory: {
-      //     role: 'claimer',
-      //     task: {
-      //       id: 'moveto.room',
-      //       targetRoomName: targetRoomName
-      //   }}}
-
-      //   spawn.spawnCreep(body, name, opts)
-      // }
+      creepFactory(spawn, 'upgrader', body(4), 2)()
     }
 
     // Defence:

@@ -1,5 +1,5 @@
 const {K} = require('combinators')
-const {assignTask, clearTask, loadTask, randomObject} = require('task')
+const {assignTask, clearTask, loadTask} = require('task')
 
 const SUPPORTED_TASKS = [
   'harvest', 'transfer', 'build', 'repair',
