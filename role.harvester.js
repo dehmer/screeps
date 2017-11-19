@@ -6,6 +6,8 @@
 
 const loop = require('loop')
 const {findContainers} = require('energy')
+const {findCreeps} = require('room')
+const {BODY_HARVESTER, name} = require('creep.body')
 const ROLE = 'harvester'
 
 const nextTask = creep => {
@@ -31,7 +33,17 @@ const nextTask = creep => {
   }
 }
 
+const spawn = spawnCreep => room => {
+  const targetCount = findContainers(room).length
+  const xs = findCreeps(room, ROLE)
+
+  if(xs.length < targetCount) {
+    spawnCreep(BODY_HARVESTER, name(ROLE), {memory: {role: ROLE}})
+  }
+}
+
 module.exports = {
   name: ROLE,
-  nextTask: nextTask
+  nextTask: nextTask,
+  spawn: spawn
 }

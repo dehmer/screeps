@@ -6,6 +6,7 @@
 const {coalesce} = require('combinators')
 const {findContainers, transferEnergy} = require('energy')
 const {findCreeps, upgradeController} = require ('room')
+const {BODY_WORKER, bodySequence, name} = require('creep.body')
 const ROLE = 'hauler'
 
 const restockStorageEnergy = creep => {
@@ -43,7 +44,18 @@ const nextTask = creep => {
   }
 }
 
+const spawn = spawnCreep => room => {
+  const targetCount = 4
+  const xs = findCreeps(room, ROLE)
+
+  if(xs.length < targetCount) {
+    const body = bodySequence(3, BODY_WORKER)
+    spawnCreep(body, name(ROLE), {memory: {role: ROLE}})
+  }
+}
+
  module.exports = {
   name: ROLE,
-  nextTask: nextTask
+  nextTask: nextTask,
+  spawn: spawn
  }

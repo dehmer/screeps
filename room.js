@@ -1,5 +1,6 @@
 const {coalesce, randomObject} = require('combinators')
 const {isCritical} = require('room.defcon')
+const {bodyCosts} = require('creep.body')
 
 const progress = target => target.progress / target.progressTotal
 const isDamaged = target => target.hits < target.hitsMax
@@ -17,6 +18,12 @@ const health = target => {
 
 const findSpawn = room => room.find(FIND_MY_SPAWNS)[0]
 
+/**
+ * Find all creeps in room, or of specific role.
+ *
+ * @param {Room} room Room to inspect
+ * @param {string} role Optional role to look for
+ */
 const findCreeps = (room, role) => {
   const filter = role ? creep => creep.memory.role === role : () => true
   return room.find(FIND_MY_CREEPS, { filter: filter })
@@ -116,7 +123,6 @@ const repairCriticalInfrastructure = creep => {
 }
 
 const spawnCreep = room => (body, name, opts) => {
-  const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
   if(room.energyCapacityAvailable < bodyCosts(body)) return console.log('[spawn] ERR_LOW_ENERGY_CAPACITY')
   if(room.energyAvailable < bodyCosts(body)) return
   const result = findSpawn(room).spawnCreep(body, name, opts)
