@@ -117,13 +117,19 @@ const repairCriticalInfrastructure = creep => {
 
 const spawnCreep = room => (body, name, opts) => {
   const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
+  if(room.energyCapacityAvailable < bodyCosts(body)) return console.log('[spawn] ERR_LOW_ENERGY_CAPACITY')
   if(room.energyAvailable < bodyCosts(body)) return
   const result = findSpawn(room).spawnCreep(body, name, opts)
+
   switch(result) {
     case OK: return
+    case ERR_NOT_OWNER: return console.log('[spawn] ERR_NOT_OWNER')
+    case ERR_NAME_EXISTS: return console.log('[spawn] ERR_NAME_EXISTS')
     case ERR_BUSY: /* wait */ break
-    case ERR_NOT_ENOUGH_ENERGY: break
-    default: console.log('[spawnCreep] - unhandled', result)
+    case ERR_NOT_ENOUGH_ENERGY: /* wait */ break
+    case ERR_INVALID_ARGS: return console.log('[spawn] ERR_INVALID_ARGS')
+    case ERR_RCL_NOT_ENOUGH: return console.log('[spawn] ERR_RCL_NOT_ENOUGH')
+    default: console.log('[spawn] unhandled', result)
   }
 }
 
