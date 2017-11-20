@@ -25,6 +25,7 @@ const findConsumers = room => room.find(FIND_STRUCTURES, { filter: needsEnergy }
 
 /**
  * Pickup dropped energy.
+ * TODO: Don't try to pickup energy when under attack
  */
 const pickupDroppedEnergy = creep => {
   const targets = findDroppedEnergy(creep.room)
@@ -105,8 +106,20 @@ const transferEnergy = creep => {
   }
 }
 
-const storageEnergyRatio = room =>
-  room.storage.store[RESOURCE_ENERGY] / room.storage.storeCapacity
+const restockStorage = creep => {
+  const storage = creep.room.storage
+  if(!storage) return
+
+  const total = _.sum(storage.store)
+  if(total < storage.storeCapacity) return {
+    id: 'transfer',
+    targetId: storage.id,
+    resource: RESOURCE_ENERGY
+  }
+}
+
+const storageLevel = (room, resource) =>
+  room.storage.store[resource] / room.storage.storeCapacity
 
 const metrics = room => {
   const sources = room.find(FIND_SOURCES)
@@ -146,7 +159,8 @@ module.exports = {
   ENERGY_TIER_4: ENERGY_TIER_4,
   acquireEnergy: acquireEnergy,
   transferEnergy: transferEnergy,
+  restockStorage: restockStorage,
 
-  storageEnergyRatio: storageEnergyRatio,
+  storageLevel: storageLevel,
   metrics: metrics
 }

@@ -8,7 +8,8 @@
  */
 
 const {randomObject, coalesce} = require('combinators')
-const {build, repairCriticalInfrastructure, preventDecay, upgradeController} = require('room')
+const {repairCriticalInfrastructure, preventDecay, upgradeController} = require('room')
+const {build, findConstructionSites} = require('room')
 const {findCreeps} = require('room')
 const {transferEnergy, acquireEnergy, ENERGY_TIER_4} = require('energy')
 const {BODY_WORKER, bodySequence, name} = require('creep.body')
@@ -22,14 +23,15 @@ const nextTask = creep => {
     upgradeController
   ])
 
-  if(creep.carry.energy === creep.carryCapacity) return consumeEnergy(creep)
+  if(creep.carry.energy) return consumeEnergy(creep)
   else return acquireEnergy(ENERGY_TIER_4)(creep)
 }
 
 const spawn = spawnCreep => room => {
-  const targetCount = 5
-  const xs = findCreeps(room, ROLE)
+  const targetCount = 4
+    + (findConstructionSites(room).length > 0 ? 2 : 0)
 
+  const xs = findCreeps(room, ROLE)
   if(xs.length < targetCount) {
     const body = bodySequence(2, BODY_WORKER)
     spawnCreep(body, name(ROLE), {memory: {role: ROLE}})

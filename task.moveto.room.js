@@ -9,7 +9,6 @@ const moveto = targetRoomName => creep => {
 
   switch(result) {
     case OK: break;
-    case ERR_NO_PATH: return clearTask(creep)
     case ERR_BUSY: break
     case ERR_TIRED: break
     default: console.log('[moveto.room] unhandled', result)

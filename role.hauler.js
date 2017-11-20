@@ -6,26 +6,14 @@
  * - upgrade controller
  */
 const {coalesce} = require('combinators')
-const {findContainers, transferEnergy} = require('energy')
-const {findCreeps, upgradeController, build} = require ('room')
+const {findContainers, transferEnergy, restockStorage} = require('energy')
+const {findCreeps, upgradeController, build} = require('room')
 const {BODY_WORKER, bodySequence, name} = require('creep.body')
 const ROLE = 'hauler'
 
-const restockStorageEnergy = creep => {
-  const storage = creep.room.storage
-  if(storage) {
-    const total = _.sum(creep.room.storage.store)
-    if(total < storage.storeCapacity) return {
-      id: 'transfer',
-      targetId: storage.id,
-      resource: RESOURCE_ENERGY
-    }
-  }
-}
-
 const nextTask = creep => {
-  const consumeEnergy = coalesce([transferEnergy, restockStorageEnergy, build, upgradeController])
-  if(creep.carry.energy == creep.carryCapacity) return consumeEnergy(creep)
+  const consumeEnergy = coalesce([transferEnergy, restockStorage, build, upgradeController])
+  if(creep.carry.energy) return consumeEnergy(creep)
   else {
 
     // Choose container with most energy, not already addressed by another hauler.
@@ -47,11 +35,11 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const targetCount = 4
+  const targetCount = 3
   const xs = findCreeps(room, ROLE)
 
   if(xs.length < targetCount) {
-    const body = bodySequence(3, BODY_WORKER)
+    const body = bodySequence(2, BODY_WORKER)
     spawnCreep(body, name(ROLE), {memory: {role: ROLE}})
   }
 }

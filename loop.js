@@ -4,7 +4,7 @@ const {assignTask, clearTask, loadTask} = require('task')
 const SUPPORTED_TASKS = [
   'harvest', 'transfer', 'build', 'repair',
   'upgrade-controller', 'withdraw', 'pickup',
-  'moveto', 'moveto.room'
+  'moveto', 'moveto.room', 'moveto.flag', 'follow.flags'
 ]
 
 const tasks = _(SUPPORTED_TASKS)

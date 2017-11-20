@@ -1,8 +1,5 @@
 const {coalesce, randomObject} = require('combinators')
-
-const isStructureType = type => target => target.structureType === type
-const isTower = isStructureType(STRUCTURE_TOWER)
-const findTowers = room => room.find(FIND_STRUCTURES, { filter: isTower })
+const {findTowers} = require('room')
 
 const run = tower => {
 
@@ -25,6 +22,5 @@ const defendRoom = room => {
 }
 
 module.exports = {
-  findTowers: findTowers,
   defendRoom: defendRoom
 }

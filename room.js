@@ -5,6 +5,8 @@ const {bodyCosts} = require('creep.body')
 const progress = target => target.progress / target.progressTotal
 const isDamaged = target => target.hits < target.hitsMax
 const damage = target => target.hits / target.hitsMax
+const isStructureType = type => target => target.structureType === type
+const isTower = isStructureType(STRUCTURE_TOWER)
 
 const HEALTH_GOOD = 'good'
 const HEALTH_BAD = 'bad'
@@ -68,6 +70,9 @@ const findDefenceFortifications = room => {
   return walls.concat(ramparts)
 }
 
+const findTowers = room => room.find(FIND_STRUCTURES, { filter: isTower })
+
+
 const build = creep => {
   const sites = findConstructionSites(creep.room)
   if(sites.length === 0) return
@@ -123,7 +128,14 @@ const repairCriticalInfrastructure = creep => {
 }
 
 const spawnCreep = room => (body, name, opts) => {
-  if(room.energyCapacityAvailable < bodyCosts(body)) return console.log('[spawn] ERR_LOW_ENERGY_CAPACITY')
+  if(room.energyCapacityAvailable < bodyCosts(body)) {
+    return console.log(
+      '[spawn] ERR_LOW_ENERGY_CAPACITY',
+      'available=' + room.energyCapacityAvailable,
+      'costs=' + bodyCosts(body)
+    )
+  }
+
   if(room.energyAvailable < bodyCosts(body)) return
   const result = findSpawn(room).spawnCreep(body, name, opts)
 
@@ -142,6 +154,8 @@ const spawnCreep = room => (body, name, opts) => {
 module.exports = {
   findSpawn: findSpawn,
   findCreeps: findCreeps,
+  findTowers: findTowers,
+  findConstructionSites: findConstructionSites,
   build: build,
   upgradeController: upgradeController,
 
