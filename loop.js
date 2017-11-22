@@ -1,29 +1,17 @@
 const {K} = require('combinators')
-const {assignTask, clearTask, loadTask} = require('task')
+const tasks = require('tasks')
+const {assignTask, clearTask, currentTask} = require('tasks')
 
-const SUPPORTED_TASKS = [
-  'harvest', 'transfer', 'build', 'repair',
-  'upgrade-controller', 'withdraw', 'pickup',
-  'moveto', 'moveto.room', 'moveto.flag', 'follow.flags'
-]
+const loop = nextTask => creep => {
+  const task = currentTask(creep) || nextTask(creep)
+  if(task) assignTask(creep, task)
+  else return
 
-const tasks = _(SUPPORTED_TASKS)
-  .map(task => require(`task.${task}`))
-  .reduce((acc, task) => K(acc)(acc => acc[task.id] = task), {})
-
-const loop = taskFactory => creep => {
-
-  const task = loadTask(creep) || taskFactory(creep)
-  if(!task) return
-
-  assignTask(creep, task)
-  K(tasks[task.id])(definition => {
-    if(definition) definition.invoke(task)(creep)
-    else {
-      console.log('unsupported task', task.id)
-      clearTask(creep)
-    }
-  })
+  if(tasks[task.id]) return tasks[task.id](task)(creep)
+  else {
+    console.log('unsupported task', task.id)
+    clearTask(creep)
+  }
 }
 
 module.exports = loop

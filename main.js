@@ -1,8 +1,8 @@
+require('prototypes')
 const {K, id} = require('combinators')
 const loop = require('loop')
 const {defendRoom} = require('room.defence')
 const {findSpawn, findCreeps, spawnCreep} = require('room')
-const {BODY_RANGER, BODY_MELEE, BODY_SCOUT, BODY_HEALER} = require('creep.body')
 
 const SUPPORTED_ROLES = [
   'upgrader', 'maintenance', 'fixer',
@@ -19,19 +19,6 @@ module.exports.loop = function () {
   // Free memory of deceased creeps:
   for(var name in Memory.creeps) {
     if(!Game.creeps[name]) delete Memory.creeps[name]
-  }
-
-  const weasel = {
-    objectives: [
-      {type: 'assemble', path: ['W5N8.AA.B']},
-      // {type: 'assemble', path: ['W5N8.AA.A']},
-      // {type: 'assemble', path: ['W9N8.CP.A', 'W9N8.CP.B', 'W9N8.CP.C', 'W9N8.CP.D']},
-      // {type: 'attack', roomName: 'W9N9'}
-    ],
-    units: [
-      {role: 'healer', count: 2, body: BODY_SCOUT},
-      {role: 'ranger', count: 4, body: BODY_RANGER},
-    ]
   }
 
   _.forEach(Game.rooms, room => {
