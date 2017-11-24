@@ -96,12 +96,14 @@ const acquireEnergy = tier => {
   return coalesce(selected)
 }
 
+/**
+ * @param {Creep} creep
+ */
 const transferEnergy = creep => {
-  const consumers = findConsumers(creep.room)
-  if(consumers.length === 0) return
-  return {
+  const target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: needsEnergy})
+  if(target) return {
     id: 'transfer',
-    targetId: randomObject(consumers).id,
+    targetId: target.id,
     resource: RESOURCE_ENERGY
   }
 }
