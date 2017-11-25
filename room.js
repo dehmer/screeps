@@ -127,17 +127,23 @@ const repairCriticalInfrastructure = creep => {
   }
 }
 
-const spawnCreep = room => (body, name, opts) => {
+const spawnCreep = room => (body, opts) => {
   if(room.energyCapacityAvailable < bodyCosts(body)) {
     return console.log(
       '[spawn] ERR_LOW_ENERGY_CAPACITY',
+      opts.memory.role,
       'available=' + room.energyCapacityAvailable,
       'costs=' + bodyCosts(body)
     )
   }
 
   if(room.energyAvailable < bodyCosts(body)) return
-  const result = findSpawn(room).spawnCreep(body, name, opts)
+
+  // Set spawns room name as `home` to any creep:
+  opts.memory.home = room.name
+  const n = `${opts.memory.role}-${room.name}-${Game.time}`
+  console.log('name', n)
+  const result = findSpawn(room).spawnCreep(body, n, opts)
 
   switch(result) {
     case OK: return

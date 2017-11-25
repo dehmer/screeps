@@ -8,7 +8,6 @@ const BODY_CARRIER = [
 
 const bodyCosts = body => _.reduce(body, (acc, x) => acc + BODYPART_COST[x], 0)
 const bodySequence = (n, body) => _.flatten(_.times(n, _.constant(body)))
-const name = role => `${role}-${Game.time}`
 
 module.exports = {
   BODY_WORKER,
@@ -16,6 +15,5 @@ module.exports = {
   BODY_CARRIER,
 
   bodyCosts: bodyCosts,
-  bodySequence: bodySequence,
-  name: name
+  bodySequence: bodySequence
 }

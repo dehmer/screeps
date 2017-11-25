@@ -8,7 +8,7 @@
 const {coalesce} = require('combinators')
 const {findContainers, transferEnergy, restockStorage} = require('energy')
 const {findCreeps, upgradeController, build} = require('room')
-const {BODY_WORKER, bodySequence, name} = require('creep.body')
+const {BODY_WORKER, bodySequence} = require('creep.body')
 const ROLE = 'hauler'
 
 const nextTask = creep => {
@@ -34,13 +34,23 @@ const nextTask = creep => {
   }
 }
 
+const bodyFactor = rcl => {
+  if(rcl < 3) return 1
+  else if(rcl < 5) return 2
+  else return 3
+}
+
 const spawn = spawnCreep => room => {
-  const targetCount = 3
+  const rcl = room.controller.level
+  const containers = findContainers(room).length
+  if(!containers) return
+
+  const targetCount = rcl > 5 ? 3 : 0
   const xs = findCreeps(room, ROLE)
 
   if(xs.length < targetCount) {
-    const body = bodySequence(3, BODY_WORKER)
-    spawnCreep(body, name(ROLE), {memory: {role: ROLE}})
+    const body = bodySequence(bodyFactor(rcl), BODY_WORKER)
+    spawnCreep(body, {memory: {role: ROLE}})
   }
 }
 

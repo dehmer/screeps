@@ -12,7 +12,7 @@ const {repairCriticalInfrastructure, preventDecay, upgradeController} = require(
 const {build, findConstructionSites} = require('room')
 const {findCreeps} = require('room')
 const {transferEnergy, acquireEnergy, ENERGY_TIER_4} = require('energy')
-const {BODY_WORKER, bodySequence, name} = require('creep.body')
+const {BODY_WORKER, bodySequence} = require('creep.body')
 const ROLE = 'maintenance'
 
 const nextTask = creep => {
@@ -27,14 +27,19 @@ const nextTask = creep => {
   else return acquireEnergy(ENERGY_TIER_4)(creep)
 }
 
+const bodyFactor = rcl => {
+  if(rcl < 3) return 1
+  else return 2
+}
+
 const spawn = spawnCreep => room => {
-  const targetCount = 3
-    + (findConstructionSites(room).length > 0 ? 2 : 0)
+  const rcl = room.controller.level
+  const targetCount = Math.ceil(rcl / 2) + 2
 
   const xs = findCreeps(room, ROLE)
   if(xs.length < targetCount) {
-    const body = bodySequence(2, BODY_WORKER)
-    spawnCreep(body, name(ROLE), {memory: {role: ROLE}})
+    const body = bodySequence(bodyFactor(rcl), BODY_WORKER)
+    spawnCreep(body, {memory: {role: ROLE}})
   }
 }
 

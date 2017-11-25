@@ -7,7 +7,7 @@
 const loop = require('loop')
 const {findContainers} = require('energy')
 const {findCreeps} = require('room')
-const {BODY_HARVESTER, name} = require('creep.body')
+const {BODY_HARVESTER} = require('creep.body')
 const ROLE = 'harvester'
 
 const nextTask = creep => {
@@ -38,7 +38,7 @@ const spawn = spawnCreep => room => {
   const xs = findCreeps(room, ROLE)
 
   if(xs.length < targetCount) {
-    spawnCreep(BODY_HARVESTER, name(ROLE), {memory: {role: ROLE}})
+    spawnCreep(BODY_HARVESTER, {memory: {role: ROLE}})
   }
 }
 
