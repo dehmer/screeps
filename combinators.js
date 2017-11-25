@@ -8,6 +8,8 @@ const K = value => func => { func(value); return value }
  * @param {object} arg Agument to apply to candidates
  */
 const coalesce = options => arg => {
+  if(!(options instanceof Array)) console.log('options not array')
+
   for(i in options) {
       const candidate = options[i](arg)
       if(candidate) return candidate

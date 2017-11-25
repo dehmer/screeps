@@ -159,6 +159,7 @@ module.exports = {
   ENERGY_TIER_2: ENERGY_TIER_2,
   ENERGY_TIER_3: ENERGY_TIER_3,
   ENERGY_TIER_4: ENERGY_TIER_4,
+  harvestSource: harvestSource,
   acquireEnergy: acquireEnergy,
   transferEnergy: transferEnergy,
   restockStorage: restockStorage,

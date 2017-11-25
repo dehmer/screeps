@@ -28,7 +28,7 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const targetCount = 4
+  const targetCount = 3
     + (findConstructionSites(room).length > 0 ? 2 : 0)
 
   const xs = findCreeps(room, ROLE)

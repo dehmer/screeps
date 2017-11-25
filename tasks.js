@@ -7,7 +7,7 @@ const currentTask = creep => creep.memory.task
 const object = id => Game.getObjectById(id)
 
 const isEmpty = (creep, resource) => !creep.carry[resource]
-const isRepaired = target => target.hits === target.hitsMax
+const isRepaired = target => !target || target.hits === target.hitsMax
 
 const isFullyLoaded = (creep, resource) =>
   creep.carryCapacity &&
@@ -60,26 +60,51 @@ const harvest = task => creep => {
 }
 
 /**
+ * Get room position from target or actual position.
+ *
+ * @param {Creep} creep
+ * @param {object} task
+ *
+ * One of `targetId`, `position` or `roomName`:
+ * @param {string} task.targetId
+ * @param {object} task.position
+ * @param {string} task.roomName
+ * @returns {RoomPosition}
+ */
+const position = (creep, task) => {
+  if(task.targetId) return object(task.targetId).pos
+  else if(task.position) return new RoomPosition(task.position.x, task.position.y, task.position.roomName)
+  else if(task.roomName && task.roomName !== creep.room.name) {
+    const exit = creep.room.findExitTo(task.roomName)
+    return creep.pos.findClosestByRange(exit)
+  }
+}
+
+/**
  * @param {object} task
  * @param {string} task.targetId
+ * @param {string} task.position
+ * @param {string} task.roomName
  * @param {string} task.opts (optional)
  */
 const moveto = task => creep => {
-  const target = object(task.targetId)
-  creep.__moveTo(target, task.opts, {
-    ERR_NO_PATH: () => clearTask(creep),
+  const targetPosition = position(creep, task)
+  if(!targetPosition) return clearTask(creep)
+
+  creep.__moveTo(targetPosition, task.opts, {
+    ERR_NO_PATH: () =>  { /* wait */},
     ERR_BUSY: () => { /* wait */},
     ERR_TIRED: () => { /* wait */}
   })
 
   // Give up after some time:
   creep.memory.attempts = creep.memory.attempts + 1 || 1
-  if(creep.memory.attempts > 50) {
+  if(creep.memory.attempts > 40) {
     delete creep.memory.attempts
     clearTask(creep)
   }
 
-  if(target.pos.isEqualTo(creep.pos)) clearTask(creep)
+  if(targetPosition.isEqualTo(creep.pos)) clearTask(creep)
 }
 
 /**

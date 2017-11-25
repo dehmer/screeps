@@ -6,7 +6,7 @@ const {findSpawn, findCreeps, spawnCreep} = require('room')
 
 const SUPPORTED_ROLES = [
   'upgrader', 'maintenance', 'fixer',
-  'harvester', 'hauler'
+  'harvester', 'hauler', 'carrier'
 ]
 
 const roles = _(SUPPORTED_ROLES)
@@ -14,7 +14,8 @@ const roles = _(SUPPORTED_ROLES)
   .reduce((acc, role) => K(acc)(acc => acc[role.name] = role), {})
 
 module.exports.loop = function () {
-  Memory.units = Memory.units || {}
+
+  Memory.remoteSources = ['W6N8', 'W5N9', 'W5N7']
 
   // Free memory of deceased creeps:
   for(var name in Memory.creeps) {

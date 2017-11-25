@@ -1,10 +1,10 @@
 const {acquireEnergy, ENERGY_TIER_4, storageLevel} = require('energy')
-const {findCreeps} = require('room')
+const {findCreeps, upgradeController} = require('room')
 const {BODY_WORKER, bodySequence, name} = require('creep.body')
 const ROLE = 'upgrader'
 
 const nextTask = creep => {
-  if(creep.carry.energy) return { id: 'upgrade-controller' }
+  if(creep.carry.energy) return upgradeController(creep)
   else return acquireEnergy(ENERGY_TIER_4)(creep)
 }
 
