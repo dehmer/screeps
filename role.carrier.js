@@ -19,7 +19,10 @@ const nextTask = creep => {
   if(!creep.carry[RESOURCE_ENERGY]) {
 
     // If we have no target room assign, pick random.
-    creep.memory.targetRoom = creep.memory.targetRoom || randomObject(Memory.remoteSources)
+    const colonies = Memory.colonies[creep.memory.home]
+    if(!colonies) { /* no colonies for said room */ return }
+
+    creep.memory.targetRoom = creep.memory.targetRoom || randomObject(colonies)
     if(creep.room.name !== creep.memory.targetRoom) {
       return {id: 'moveto', roomName: creep.memory.targetRoom}
     }
@@ -36,11 +39,17 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const targetCount = 0
 
-  // NOTE: Don't limit search to single room.
-  // TODO: Count carriers for this room only.
-  const xs = _.filter(Game.creeps, (creep, name) => creep.memory.role === ROLE)
+  // Don't spawn if there are no colonies for this room:
+  if(!Memory.colonies[room.name]) return
+
+  const targetCount = 1
+
+  const counts = creep =>
+    creep.memory.role === ROLE &&
+    creep.memory.home === room.name
+
+  const xs = _.filter(Game.creeps, counts)
   if(xs.length < targetCount) {
     const body = bodySequence(1, BODY_CARRIER)
     spawnCreep(body, {memory: {role: ROLE}})

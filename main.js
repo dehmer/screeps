@@ -14,7 +14,12 @@ const roles = _(SUPPORTED_ROLES)
   .reduce((acc, role) => K(acc)(acc => acc[role.name] = role), {})
 
 module.exports.loop = function () {
-  Memory.remoteSources = ['W6N8', 'W5N9', 'W5N7', 'W6N9']
+
+  // Configure available rooms for remote harvesting.
+  // For each room we have a list of colonies to 'exploit'.
+  Memory.colonies = {
+    'W5N8': ['W6N8', 'W5N9', 'W5N7', 'W6N9']
+  }
 
   // Free memory of deceased creeps:
   for(var name in Memory.creeps) {
