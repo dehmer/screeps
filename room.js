@@ -12,10 +12,8 @@ const HEALTH_GOOD = 'good'
 const HEALTH_BAD = 'bad'
 
 const health = target => {
-  const hits = target.hits
-  const rcl = target.room.controller.level
-  if(target.structureType === STRUCTURE_ROAD) return hits < 3000 ? HEALTH_BAD : HEALTH_GOOD
-  if(target.structureType === STRUCTURE_CONTAINER) return hits < 150000 ? HEALTH_BAD : HEALTH_GOOD
+  const level = target.hits / target.hitsMax
+  return level < 0.5 ? HEALTH_BAD : HEALTH_GOOD
 }
 
 const findSpawn = room => room.find(FIND_MY_SPAWNS)[0]
@@ -162,6 +160,7 @@ module.exports = {
   findCreeps: findCreeps,
   findTowers: findTowers,
   findConstructionSites: findConstructionSites,
+  findDecayingStructures: findDecayingStructures,
   build: build,
   upgradeController: upgradeController,
 

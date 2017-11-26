@@ -1,25 +1,21 @@
 /**
- * MAINTENANCE CREEP (WORK, CARRY, MOVE):
+ * BUILDER CREEP (WORK, CARRY, MOVE):
  *
- * - harvests and transfers energy to structures in need
+ * - is only spawned if some building is to do
  * - works on construction sites
- * - repairs damaged structures
- * - upgrades controller otherwise
  */
 
 const {coalesce} = require('combinators')
 const {build, preventDecay} = require('room')
-const {findCreeps, repairCriticalInfrastructure, upgradeController} = require('room')
-const {transferEnergy, acquireEnergy, ENERGY_TIER_4} = require('energy')
+const {findCreeps, findConstructionSites} = require('room')
+const {acquireEnergy, ENERGY_TIER_4} = require('energy')
 const {BODY_WORKER, bodySequence} = require('creep.body')
-const ROLE = 'maintenance'
+const ROLE = 'builder'
 
 const nextTask = creep => {
   const consumeEnergy = coalesce([
-    transferEnergy,
-    preventDecay,
-    repairCriticalInfrastructure,
-    upgradeController
+    build,
+    preventDecay // repair until TTL is up.
   ])
 
   if(creep.carry.energy) return consumeEnergy(creep)
@@ -27,7 +23,8 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const targetCount = 2
+  const sites = findConstructionSites(room)
+  const targetCount = sites.length * 2
 
   const xs = findCreeps(room, ROLE)
   if(xs.length < targetCount) {

@@ -3,10 +3,11 @@ const {K, id} = require('combinators')
 const loop = require('loop')
 const {defendRoom} = require('room.defence')
 const {findSpawn, findCreeps, spawnCreep} = require('room')
+const economy = require('economy')
 
 const SUPPORTED_ROLES = [
   'upgrader', 'maintenance', 'fixer',
-  'harvester', 'hauler', 'carrier', 'claimer'
+  'harvester', 'hauler', 'carrier', 'claimer', 'builder'
 ]
 
 const roles = _(SUPPORTED_ROLES)
@@ -22,11 +23,13 @@ module.exports.loop = function () {
   }
 
   // Free memory of deceased creeps:
+  // TODO: garbage collect only every n ticks.
   for(var name in Memory.creeps) {
     if(!Game.creeps[name]) delete Memory.creeps[name]
   }
 
   _.forEach(Game.rooms, room => {
+    economy(room)
 
     // We might have creeps in rooms without a spawn.
     if(findSpawn(room)) {

@@ -22,10 +22,10 @@ const nextTask = creep => {
     else console.log('no free containers for harvester')
   }
   else {
-    // Only resume harvesting if storage capacity is below 70%:
+    // Only resume harvesting if storage capacity is below 90%:
     const container = _.find(containers, c => c.pos.isEqualTo(creep.pos))
-    const capacity = container.store[RESOURCE_ENERGY] / container.storeCapacity
-    if(capacity < 0.7) {
+    const level = container.store[RESOURCE_ENERGY] / container.storeCapacity
+    if(level < 0.9) {
       // Find nearest source:
       const source = creep.pos.findClosestByRange(FIND_SOURCES)
       if(source) return { id: 'harvest', targetId: source.id }
