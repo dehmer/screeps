@@ -22,7 +22,7 @@ Creep.prototype.__build = function(target, handlers) {
 
   const result = this.build(target)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.build] unhandled', result)
+    console.log(`[${this.name}] build -> ${ERRORS[result]}`)
   }
 }
 
@@ -38,11 +38,12 @@ Creep.prototype.__harvest = function(target, handlers) {
 
   const result = this.harvest(target)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.harvest] unhandled', result)
+    console.log(`[${this.name}] harvest -> ${ERRORS[result]}`)
   }
 }
 
 Creep.prototype.__moveTo = function(target, opts, handlers) {
+
   const ERRORS = []
   ERRORS[ERR_NOT_OWNER]      = 'ERR_NOT_OWNER'
   ERRORS[ERR_NO_PATH]        = 'ERR_NO_PATH'
@@ -53,7 +54,7 @@ Creep.prototype.__moveTo = function(target, opts, handlers) {
 
   const result = this.moveTo(target, opts)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.moveTo] unhandled', ERRORS[result])
+    console.log(`[${this.name}] moveTo -> ${ERRORS[result]}`)
   }
 }
 
@@ -67,7 +68,7 @@ Creep.prototype.__pickup = function(target, handlers) {
 
   const result = this.pickup(target)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.pickup] unhandled', result)
+    console.log(`[${this.name}] pickup -> ${ERRORS[result]}`)
   }
 }
 
@@ -82,7 +83,7 @@ Creep.prototype.__repair = function(target, handlers) {
 
   const result = this.repair(target)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.repair] unhandled', result)
+    console.log(`[${this.name}] repair -> ${ERRORS[result]}`)
   }
 }
 
@@ -98,7 +99,7 @@ Creep.prototype.__transfer = function(target, resourceType, amount, handlers) {
 
   const result = this.transfer(target, resourceType, amount)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.transfer] unhandled', result)
+    console.log(`[${this.name}] transfer -> ${ERRORS[result]}`)
   }
 }
 
@@ -113,7 +114,7 @@ Creep.prototype.__upgradeController = function(target, handlers) {
 
   const result = this.upgradeController(target)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.upgradeController] unhandled', result)
+    console.log(`[${this.name}] upgradeController -> ${ERRORS[result]}`)
   }
 }
 
@@ -129,6 +130,6 @@ Creep.prototype.__withdraw = function(target, resourceType, amount, handlers) {
 
   const result = this.withdraw(target, resourceType, amount)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log('[creep.withdraw] unhandled', result)
+    console.log(`[${this.name}] withdraw -> ${ERRORS[result]}`)
   }
 }

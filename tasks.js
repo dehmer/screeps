@@ -88,6 +88,10 @@ const position = (creep, task) => {
  * @param {string} task.opts (optional)
  */
 const moveto = task => creep => {
+
+  // Don't even try if tired:
+  if(creep.fatigue) return
+
   const targetPosition = position(creep, task)
   if(!targetPosition) return clearTask(creep)
 

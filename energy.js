@@ -28,10 +28,11 @@ const findConsumers = room => room.find(FIND_STRUCTURES, { filter: needsEnergy }
  * TODO: Don't try to pickup energy when under attack
  */
 const pickupDroppedEnergy = creep => {
-  const targets = findDroppedEnergy(creep.room)
-  if(targets.length > 0) return {
+  const droppedEnergy = findDroppedEnergy(creep.room)
+  const target = creep.pos.findClosestByPath(droppedEnergy)
+  if(target) return {
     id: 'pickup',
-    targetId: randomObject(targets).id
+    targetId: target.id
   }
 }
 
