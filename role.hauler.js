@@ -34,22 +34,16 @@ const nextTask = creep => {
   }
 }
 
-const bodyFactor = rcl => {
-  if(rcl < 3) return 1
-  else if(rcl < 5) return 2
-  else return 3
-}
-
 const spawn = spawnCreep => room => {
-  const rcl = room.controller.level
-  const containers = findContainers(room).length
-  if(!containers) return
 
-  const targetCount = rcl > 5 ? 3 : 0
+  // No use for haulers until we have a storage:
+  if(!room.storage) return
+
+  const targetCount = 1
   const xs = findCreeps(room, ROLE)
 
   if(xs.length < targetCount) {
-    const body = bodySequence(bodyFactor(rcl), BODY_WORKER)
+    const body = bodySequence(1, BODY_WORKER)
     spawnCreep(body, {memory: {role: ROLE}})
   }
 }

@@ -146,10 +146,20 @@ const repair = task => creep => {
  * @param {number} task.amount (optional)
  */
 const transfer = task => creep => {
+
+  // Clear all transfer tasks with same target:
+  const clearTransferTasks = () => {
+    creep.room.find(FIND_MY_CREEPS, {filter: creep => {
+      return creep.memory.task
+        && creep.memory.task.id === 'transfer'
+        && creep.memory.task.targetId === task.targetId
+    }}).forEach(clearTask)
+  }
+
   const target = object(task.targetId)
   creep.__transfer(target, task.resource, task.amount, {
     ERR_NOT_ENOUGH_RESOURCES: () => clearTask(creep),
-    ERR_FULL: () => clearTask(creep),
+    ERR_FULL: () => clearTransferTasks(),
     ERR_NOT_IN_RANGE: () => creep.__moveTo(target)
   })
 

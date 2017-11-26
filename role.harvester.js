@@ -36,7 +36,6 @@ const nextTask = creep => {
 const spawn = spawnCreep => room => {
   const targetCount = findContainers(room).length
   const xs = findCreeps(room, ROLE)
-
   if(xs.length < targetCount) {
     spawnCreep(BODY_HARVESTER, {memory: {role: ROLE}})
   }

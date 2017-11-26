@@ -8,20 +8,11 @@ const nextTask = creep => {
   else return acquireEnergy(ENERGY_TIER_4)(creep)
 }
 
-const bodyFactor = rcl => {
-  if(rcl == 1) return 1
-  else if(rcl < 3) return 2
-  else if(rcl < 4) return 3
-  else return 4
-}
-
 const spawn = spawnCreep => room => {
-  const rcl = room.controller.level
-  const targetCount = Math.ceil(rcl / 2)
-
+  const targetCount = 2
   const xs = findCreeps(room, ROLE)
   if(xs.length < targetCount) {
-    const body = bodySequence(bodyFactor(rcl), BODY_WORKER)
+    const body = bodySequence(1, BODY_WORKER)
     spawnCreep(body, {memory: {role: ROLE}})
   }
 }

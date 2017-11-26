@@ -65,8 +65,8 @@ const findDefenceFortifications = room => {
     .find(FIND_STRUCTURES, {filter: target => target.structureType === structureType})
     .sort((a, b) => damage(a) - damage(b))
 
-  const walls = _.take(mostDamaged(STRUCTURE_WALL), 5)
-  const ramparts = _.take(mostDamaged(STRUCTURE_RAMPART), 5)
+  const walls = _.take(mostDamaged(STRUCTURE_WALL), 4)
+  const ramparts = _.take(mostDamaged(STRUCTURE_RAMPART), 4)
   return walls.concat(ramparts)
 }
 
@@ -74,11 +74,12 @@ const findTowers = room => room.find(FIND_STRUCTURES, { filter: isTower })
 
 
 const build = creep => {
-  const sites = findConstructionSites(creep.room)
-  if(sites.length === 0) return
-  return {
+  // Prefer closest building site.
+  const closestSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES)
+
+  if(closestSite) return {
     id: 'build',
-    targetId: randomObject(sites).id
+    targetId: closestSite.id
   }
 }
 
@@ -141,9 +142,8 @@ const spawnCreep = room => (body, opts) => {
 
   // Set spawns room name as `home` to any creep:
   opts.memory.home = room.name
-  const n = `${opts.memory.role}-${room.name}-${Game.time}`
-  console.log('name', n)
-  const result = findSpawn(room).spawnCreep(body, n, opts)
+  const name = `${opts.memory.role}-${room.name}-${Game.time}`
+  const result = findSpawn(room).spawnCreep(body, name, opts)
 
   switch(result) {
     case OK: return

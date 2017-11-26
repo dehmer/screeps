@@ -1,8 +1,7 @@
 /**
  * FIXER CREEP (MOVE, CARRY, WORK):
  *
- * Fixes critical infrastructure and fortifies defence,
- * also builds stuff before fortification.
+ * Fixes critical infrastructure and fortifies defence.
  */
 
 const {coalesce} = require('combinators')
@@ -15,7 +14,8 @@ const ROLE = 'fixer'
 const nextTask = creep => {
   const consumeEnergy = coalesce([
     transferEnergy,
-    repairCriticalInfrastructure, build, fortify
+    repairCriticalInfrastructure,
+    fortify
   ])
 
   if(creep.carry[RESOURCE_ENERGY]) return consumeEnergy(creep)
@@ -23,10 +23,8 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const rcl = room.controller.level
-  const targetCount = Math.ceil(rcl / 2) + 1
+  const targetCount = 2
   const xs = findCreeps(room, ROLE)
-
   if(xs.length < targetCount) {
     const body = bodySequence(1, BODY_WORKER)
     spawnCreep(body, {memory: {role: ROLE}})

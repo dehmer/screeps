@@ -12,7 +12,7 @@ const {upgradeController, findSpawn, build} = require('room')
 const ROLE = 'carrier'
 
 const goHome = creep => {
-  return {id: 'moveto', roomName: creep.memory.base}
+  return {id: 'moveto', roomName: creep.memory.home}
 }
 
 const nextTask = creep => {
@@ -28,7 +28,7 @@ const nextTask = creep => {
   else {
     // Reset target room, so that we pick another one next time:
     delete creep.memory.targetRoom
-    if(creep.room.name !== creep.memory.base) {
+    if(creep.room.name !== creep.memory.home) {
       return coalesce([build, transferEnergy, goHome])(creep)
     }
     else return coalesce([restockStorage, upgradeController])(creep)
@@ -36,19 +36,14 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const rcl = room.controller.level
-  if(rcl < 6) return
+  const targetCount = 0
 
-  const targetCount = 15
-
-  // NOTE: Don't limit search to single room:
+  // NOTE: Don't limit search to single room.
+  // TODO: Count carriers for this room only.
   const xs = _.filter(Game.creeps, (creep, name) => creep.memory.role === ROLE)
   if(xs.length < targetCount) {
     const body = bodySequence(1, BODY_CARRIER)
-    spawnCreep(body, {memory: {
-      role: ROLE,
-      base: room.name
-    }})
+    spawnCreep(body, {memory: {role: ROLE}})
   }
 }
 
