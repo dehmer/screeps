@@ -1,5 +1,6 @@
-const {K} = require('combinators')
+const {K, id} = require('combinators')
 const {findContainers} = require('energy')
+const {body} = require('creep.body')
 
 const assignTask = (creep, task) => K(task)(task => creep.memory.task = task)
 const clearTask = (creep, reason) => delete creep.memory.task
@@ -50,6 +51,7 @@ const harvest = task => creep => {
   creep.__harvest(target, {
     ERR_BUSY: () => { /* don't care */ },
     ERR_NOT_ENOUGH_RESOURCES: () => { /* wait */ },
+    ERR_NO_BODYPART: () => creep.suicide(), // <-- poor lad must've been attacked!
     ERR_NOT_IN_RANGE: () => creep.__moveTo(target, {
       ERR_NO_PATH: () => clearTask(creep),
       ERR_TIRED: () => { /* so what?! */ }
@@ -133,14 +135,37 @@ const pickup = task => creep => {
  * @param {string} targetId
  */
 const repair = task => creep => {
+
   const target = object(task.targetId)
+
+  // console.log(_(creep.body).map(b => )
+
+  task.ref = task.ref || id()
+  // Memory.debug = Memory.debug || {}
+  // Memory.debug[task.ref] = Memory.debug[task.ref] || {
+  //   type: target.structureType,
+  //   energy: creep.carry[RESOURCE_ENERGY],
+  //   workParts: _.filter(body(creep), part => part === WORK).length,
+  //   time: Game.time,
+  //   hits: target.hits
+  // }
+
   creep.__repair(target, {
     ERR_NOT_IN_RANGE: () => creep.__moveTo(target),
-    ERR_NOT_ENOUGH_RESOURCES: () => clearTask(creep)
+    ERR_NOT_ENOUGH_RESOURCES: () => {
+      // Memory.debug[task.ref] = {
+      //   type: Memory.debug[task.ref].type,
+      //   energy: Memory.debug[task.ref].energy,
+      //   workParts: Memory.debug[task.ref].workParts,
+      //   duration: Game.time - Memory.debug[task.ref].time,
+      //   hits: target.hits - Memory.debug[task.ref].hits
+      // }
+
+      clearTask(creep)
+    }
   })
 
   if(isRepaired(target)) return clearTask(creep)
-  if(isEmpty(creep, RESOURCE_ENERGY)) return clearTask(creep)
 }
 
 /**

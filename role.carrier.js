@@ -43,7 +43,7 @@ const spawn = spawnCreep => room => {
   // Don't spawn if there are no colonies for this room:
   if(!Memory.colonies[room.name]) return
 
-  const targetCount = 5
+  const targetCount = 10
 
   const counts = creep =>
     creep.memory.role === ROLE &&
@@ -51,7 +51,7 @@ const spawn = spawnCreep => room => {
 
   const xs = _.filter(Game.creeps, counts)
   if(xs.length < targetCount) {
-    const body = bodySequence(1, BODY_CARRIER)
+    const body = bodySequence(2, BODY_CARRIER)
     spawnCreep(body, {memory: {role: ROLE}})
   }
 }

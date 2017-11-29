@@ -63,8 +63,8 @@ const findDefenceFortifications = room => {
     .find(FIND_STRUCTURES, {filter: target => target.structureType === structureType})
     .sort((a, b) => damage(a) - damage(b))
 
-  const walls = _.take(mostDamaged(STRUCTURE_WALL), 4)
-  const ramparts = _.take(mostDamaged(STRUCTURE_RAMPART), 4)
+  const walls = _.take(mostDamaged(STRUCTURE_WALL), 2)
+  const ramparts = _.take(mostDamaged(STRUCTURE_RAMPART), 2)
   return walls.concat(ramparts)
 }
 

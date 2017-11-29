@@ -39,11 +39,11 @@ const spawn = spawnCreep => room => {
   // No use for haulers until we have a storage:
   if(!room.storage) return
 
-  const targetCount = 1
+  const targetCount = 4
   const xs = findCreeps(room, ROLE)
 
   if(xs.length < targetCount) {
-    const body = bodySequence(1, BODY_WORKER)
+    const body = bodySequence(3, BODY_WORKER)
     spawnCreep(body, {memory: {role: ROLE}})
   }
 }

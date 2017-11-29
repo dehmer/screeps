@@ -27,11 +27,11 @@ const nextTask = creep => {
 }
 
 const spawn = spawnCreep => room => {
-  const targetCount = 2
+  const targetCount = 3
 
   const xs = findCreeps(room, ROLE)
   if(xs.length < targetCount) {
-    const body = bodySequence(1, BODY_WORKER)
+    const body = bodySequence(2, BODY_WORKER)
     spawnCreep(body, {memory: {role: ROLE}})
   }
 }

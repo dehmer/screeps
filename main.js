@@ -19,7 +19,8 @@ module.exports.loop = function () {
   // Configure available rooms for remote harvesting.
   // For each room we have a list of colonies to 'exploit'.
   Memory.colonies = {
-    'W5N8': ['W6N8', 'W5N9', 'W5N7', 'W6N9']
+    'W5N8': ['W6N8', 'W5N9', 'W5N7', 'W6N9'],
+    'W4N9': ['W3N9', 'W3N8', 'W3N7']
   }
 
   // Free memory of deceased creeps:
