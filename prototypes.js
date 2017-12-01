@@ -43,6 +43,8 @@ Creep.prototype.__harvest = function(target, handlers) {
 }
 
 Creep.prototype.__moveTo = function(target, opts, handlers) {
+  // Adjust args in case optional `opts` were left out:
+  if(arguments.length === 2) handlers = arguments[1]
 
   const ERRORS = []
   ERRORS[ERR_NOT_OWNER]      = 'ERR_NOT_OWNER'
@@ -54,7 +56,7 @@ Creep.prototype.__moveTo = function(target, opts, handlers) {
 
   const result = this.moveTo(target, opts)
   if(!handle(handlers, ERRORS)(result)) {
-    console.log(`[${this.name}] moveTo -> ${ERRORS[result]}`)
+    console.log(`[${this.name}] moveTo -> ${ERRORS[result]}: task=${JSON.stringify(this.memory.task)}`)
   }
 }
 

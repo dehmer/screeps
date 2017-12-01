@@ -1,6 +1,5 @@
 const {K, id} = require('combinators')
 const {findContainers} = require('energy')
-const {body} = require('creep.body')
 
 const assignTask = (creep, task) => K(task)(task => creep.memory.task = task)
 const clearTask = (creep, reason) => delete creep.memory.task
@@ -26,7 +25,9 @@ const build = task => creep => {
   if(isEmpty(creep, RESOURCE_ENERGY)) clearTask(creep)
 
   creep.__build(target, {
-    ERR_NOT_IN_RANGE: () => creep.__moveTo(target),
+    ERR_NOT_IN_RANGE: () => creep.__moveTo(target, {
+      ERR_TIRED: () => {}
+    }),
     ERR_NOT_ENOUGH_RESOURCES: () => { /* so be it */ }
   })
 }
@@ -54,7 +55,7 @@ const harvest = task => creep => {
     ERR_NO_BODYPART: () => creep.suicide(), // <-- poor lad must've been attacked!
     ERR_NOT_IN_RANGE: () => creep.__moveTo(target, {
       ERR_NO_PATH: () => clearTask(creep),
-      ERR_TIRED: () => { /* so what?! */ }
+      ERR_TIRED: () => { /* so what?! */ },
     })
   })
 
@@ -91,6 +92,11 @@ const position = (creep, task) => {
  */
 const moveto = task => creep => {
 
+  const enemies = creep.room.find(FIND_HOSTILE_CREEPS)
+  if(enemies.length) {
+    console.log(`[${creep.name}] hostile movement detected.`)
+  }
+
   // Don't even try if tired:
   if(creep.fatigue) return
 
@@ -124,7 +130,9 @@ const pickup = task => creep => {
   const result = creep.__pickup(target, {
     ERR_BUSY: () => { /* wait */ },
     ERR_FULL: () => clearTask(creep),
-    ERR_NOT_IN_RANGE: () => creep.__moveTo(target)
+    ERR_NOT_IN_RANGE: () => creep.__moveTo(target, {
+      ERR_TIRED: () => {}
+    })
   })
 
   if(isFullyLoaded(creep, RESOURCE_ENERGY)) clearTask(creep)
@@ -138,31 +146,12 @@ const repair = task => creep => {
 
   const target = object(task.targetId)
 
-  // console.log(_(creep.body).map(b => )
-
   task.ref = task.ref || id()
-  // Memory.debug = Memory.debug || {}
-  // Memory.debug[task.ref] = Memory.debug[task.ref] || {
-  //   type: target.structureType,
-  //   energy: creep.carry[RESOURCE_ENERGY],
-  //   workParts: _.filter(body(creep), part => part === WORK).length,
-  //   time: Game.time,
-  //   hits: target.hits
-  // }
-
   creep.__repair(target, {
-    ERR_NOT_IN_RANGE: () => creep.__moveTo(target),
-    ERR_NOT_ENOUGH_RESOURCES: () => {
-      // Memory.debug[task.ref] = {
-      //   type: Memory.debug[task.ref].type,
-      //   energy: Memory.debug[task.ref].energy,
-      //   workParts: Memory.debug[task.ref].workParts,
-      //   duration: Game.time - Memory.debug[task.ref].time,
-      //   hits: target.hits - Memory.debug[task.ref].hits
-      // }
-
-      clearTask(creep)
-    }
+    ERR_NOT_IN_RANGE: () => creep.__moveTo(target, {
+      ERR_TIRED: () => { /* freakin' swamps! */ }
+    }),
+    ERR_NOT_ENOUGH_RESOURCES: () => clearTask(creep)
   })
 
   if(isRepaired(target)) return clearTask(creep)
@@ -189,7 +178,10 @@ const transfer = task => creep => {
   creep.__transfer(target, task.resource, task.amount, {
     ERR_NOT_ENOUGH_RESOURCES: () => clearTask(creep),
     ERR_FULL: () => clearTransferTasks(),
-    ERR_NOT_IN_RANGE: () => creep.__moveTo(target)
+    ERR_NOT_IN_RANGE: () => creep.__moveTo(target, {
+      ERR_TIRED: () => {},
+      ERR_NO_PATH: () => {}
+    })
   })
 
   if(isEmpty(creep, task.resource)) clearTask(creep)
@@ -220,7 +212,10 @@ const withdraw = task => creep => {
     ERR_BUSY: () => { /* don't care */ },
     ERR_NOT_ENOUGH_RESOURCES: () => clearTask(creep),
     ERR_FULL: () => clearTask(creep),
-    ERR_NOT_IN_RANGE: () => creep.__moveTo(target)
+    ERR_NOT_IN_RANGE: () => creep.__moveTo(target, {
+      ERR_TIRED: () => {},
+      ERR_NO_PATH: () => {}
+    })
   })
 
   if(isFullyLoaded(creep, task.resource)) return clearTask(creep)

@@ -43,6 +43,8 @@ const spawn = spawnCreep => room => {
   // Don't spawn if there are no colonies for this room:
   if(!Memory.colonies[room.name]) return
 
+  // Also, don't spawn when carriers were attacked recently.
+
   const targetCount = 10
 
   const counts = creep =>
